@@ -263,11 +263,10 @@ final class Paynet_WC_Order_Body {
 				'Amount'      => $item['amount'],
 				'TotalAmount' => $item['amount'],
 			);
+			// The test API answers 500 when Code is missing, although the docs call it optional (CI 16.11.2026).
 			$code = Paynet_WC_Text::clean( $item['code'], self::MAX_PRODUCT_CODE );
-			if ( '' !== $code ) {
-				$product['Code'] = $code;
-			}
-			$products[] = $product;
+			$product['Code'] = '' !== $code ? $code : 'item-' . $line_no;
+			$products[]      = $product;
 		}
 		return $products;
 	}

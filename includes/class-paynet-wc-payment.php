@@ -271,12 +271,12 @@ class Paynet_WC_Payment {
 	public function body( WC_Order $order, $number, $mode, $expiry = null ) {
 		$lines = array();
 		foreach ( $order->get_items( array( 'line_item', 'shipping', 'fee' ) ) as $item ) {
-			$code = '';
+			$code = $item->get_type(); // shipping, fee.
 			$qty  = 1;
 			if ( $item instanceof WC_Order_Item_Product ) {
 				$qty     = $item->get_quantity();
 				$product = $item->get_product();
-				$code    = $product ? $product->get_sku() : '';
+				$code    = $product && '' !== $product->get_sku() ? $product->get_sku() : 'product-' . $item->get_product_id();
 			}
 			$lines[] = array(
 				'code'  => $code,

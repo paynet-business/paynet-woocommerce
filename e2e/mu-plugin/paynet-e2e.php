@@ -273,7 +273,14 @@ add_action(
  *
  * @return array
  */
-function paynet_e2e_setup() {
+function paynet_e2e_setup( $req = null ) {
+	// HPOS on/off for this run. Set here, after WooCommerce has installed itself on the first web request
+	// (a new store turns HPOS on during installation, which would override a CLI setting made earlier).
+	$params = $req ? (array) $req->get_json_params() : array();
+	if ( isset( $params['hpos'] ) && ! get_option( 'paynet_e2e_ids' ) ) {
+		update_option( 'woocommerce_custom_orders_table_data_sync_enabled', 'no' );
+		update_option( 'woocommerce_custom_orders_table_enabled', 'off' === $params['hpos'] ? 'no' : 'yes' );
+	}
 	$ids = get_option( 'paynet_e2e_ids' );
 	if ( is_array( $ids ) ) {
 		return $ids;

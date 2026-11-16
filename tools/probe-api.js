@@ -170,7 +170,14 @@ async function rule( name, mutate, opts = {} ) {
 	const order = nextOrder();
 	const body = baseOrder( order );
 	mutate( body );
-	const r = await call( 'POST', '/api/order', body );
+	let r;
+	if ( opts.bigOrder ) {
+		const big = ( BigInt( Math.floor( 100000 + Math.random() * 899999 ) ) * 1000000000000n + BigInt( seq ) * 1000n + 1n ).toString();
+		const res = await fetch( BASE + '/api/order', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify( body ).replace( '"Order":0', '"Order":' + big ) } );
+		r = { status: res.status, json: await res.json().catch( () => null ) };
+	} else {
+		r = await call( 'POST', '/api/order', body );
+	}
 	let extra = '';
 	if ( 200 === r.status && opts.readBack ) {
 		const g = await call( 'GET', '/api/order/merchant/' + order );
@@ -212,6 +219,24 @@ async function main() {
 		nm.Services[ 0 ].Products[ 0 ].Name = 'Other name';
 		const r3 = await call( 'POST', '/api/order', nm );
 		results.rules.push( { name: 'Same Order, product name changed', status: r3.status, code: r3.json?.code || '', detail: ( r3.json?.details || '' ).slice( 0, 100 ), extra: 'same paymentId: ' + ( r3.json?.paymentId === base.r.json?.paymentId ) } );
+	}
+	if ( want( 'round3' ) ) {
+		const line2 = ( extra ) => ( b ) => {
+			Object.assign( b.Services[ 0 ].Products[ 0 ], { UnitPrice: 250, Amount: 250, TotalAmount: 250 } );
+			b.Services[ 0 ].Products.push( Object.assign( { LineNo: 2, Name: 'Courier', UnitPrice: 50, Quantity: 100, Amount: 50, TotalAmount: 50 }, extra ) );
+		};
+		await rule( 'Second line without Code and Description', line2( {} ) );
+		await rule( 'Second line with Code, without Description', line2( { Code: 'shipping' } ) );
+		await rule( 'Second line with Description, without Code', line2( { Description: 'Courier' } ) );
+		await rule( 'Second line with empty Code ""', line2( { Code: '' } ) );
+		await rule( 'Single line without Code', ( b ) => delete b.Services[ 0 ].Products[ 0 ].Code );
+		await rule( 'Single line without Description', ( b ) => delete b.Services[ 0 ].Products[ 0 ].Description );
+		await rule( 'Zero-amount line WITH Code', ( b ) => b.Services[ 0 ].Products.push( { LineNo: 2, Code: 'gift', Name: 'Free gift', UnitPrice: 0, Quantity: 100, Amount: 0, TotalAmount: 0 } ) );
+		await rule( 'Negative line WITH Code (sum = Amount)', ( b ) => {
+			Object.assign( b.Services[ 0 ].Products[ 0 ], { UnitPrice: 400, Amount: 400, TotalAmount: 400 } );
+			b.Services[ 0 ].Products.push( { LineNo: 2, Code: 'discount', Name: 'Discount', UnitPrice: -100, Quantity: 100, Amount: -100, TotalAmount: -100 } );
+		} );
+		await rule( 'Order ~6.9e17 (test salt formula), single line', ( b ) => ( b.Order = 0 ), { bigOrder: true } );
 	}
 	if ( ! want( 'rules' ) && ! want( 'lengths' ) ) {
 		return finish();

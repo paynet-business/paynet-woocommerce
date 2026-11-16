@@ -18,7 +18,7 @@ async function helper( request, method, path, data ) {
 	return JSON.parse( text );
 }
 
-const setup = ( request ) => helper( request, 'POST', '/setup', {} );
+const setup = ( request ) => helper( request, 'POST', '/setup', { hpos: process.env.HPOS || 'on' } );
 const order = ( request, id ) => helper( request, 'GET', `/order/${ id }` );
 const latestOrder = async ( request ) => ( await helper( request, 'GET', '/latest-order' ) ).id;
 const runChecks = ( request, id ) => helper( request, 'POST', `/run-checks/${ id }` );

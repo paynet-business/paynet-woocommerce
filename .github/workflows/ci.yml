@@ -91,12 +91,7 @@ jobs:
           e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_default_country MD
           e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_coming_soon no
           e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_onboarding_profile '{"skipped":true}' --format=json
-          if [ "$HPOS" = "on" ]; then
-            e2e/node_modules/.bin/wp-env run cli wp wc hpos enable
-          else
-            e2e/node_modules/.bin/wp-env run cli wp wc hpos disable
-          fi
-          e2e/node_modules/.bin/wp-env run cli wp wc hpos status || true
+          # HPOS on/off is set by the E2E setup (after WooCommerce finishes installing on the first web request).
           e2e/node_modules/.bin/wp-env run cli wp plugin list --fields=name,version,status
         env:
           WP_ENV_HOME: ${{ runner.temp }}/wp-env

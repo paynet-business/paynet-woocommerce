@@ -104,6 +104,22 @@ final class OrderBodyTest extends TestCase {
 		$this->assertSame( $p['Amount'], intdiv( $p['UnitPrice'] * $p['Quantity'], 100 ) );
 	}
 
+	public function test_every_line_has_code() {
+		// The test API rejects a product line without Code (HTTP 500), although the docs call it optional.
+		$b = Paynet_WC_Order_Body::build(
+			$this->data(
+				array(
+					'total' => '80.00',
+					'lines' => array(
+						array( 'code' => 'SKU-1', 'name' => 'Product', 'qty' => 1, 'total' => '30.00' ),
+						array( 'code' => '', 'name' => 'Courier', 'qty' => 1, 'total' => '50.00' ),
+					),
+				)
+			)
+		);
+		$this->assertSame( array( 'SKU-1', 'item-2' ), array_column( $b['Services'][0]['Products'], 'Code' ) );
+	}
+
 	public function test_zero_lines_dropped() {
 		// The API rejects zero-amount lines (probe 16.11.2026).
 		$b = Paynet_WC_Order_Body::build(
@@ -136,6 +152,7 @@ final class OrderBodyTest extends TestCase {
 		$this->assertCount( 1, $products );
 		$this->assertSame( 'Order #123', $products[0]['Name'] );
 		$this->assertSame( 2500, $products[0]['Amount'] );
+		$this->assertSame( 'item-1', $products[0]['Code'] );
 	}
 
 	public function test_last_line_going_negative_gives_single_line() {
