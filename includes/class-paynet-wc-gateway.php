@@ -240,7 +240,8 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 			<th scope="row" class="titledesc"><?php echo esc_html( $data['title'] ); ?></th>
 			<td class="forminp">
 				<input type="text" class="small-text" readonly value="<?php echo esc_attr( (string) self::get_salt() ); ?>" />
-				<button type="submit" class="button" name="paynet_wc_regenerate_salt" value="1"><?php esc_html_e( 'Regenerate', 'paynet-for-woocommerce' ); ?></button>
+				<input type="hidden" name="paynet_wc_regenerate_salt" value="" class="paynet-wc-regenerate-flag" />
+				<button type="button" class="button paynet-wc-regenerate-salt"><?php esc_html_e( 'Regenerate', 'paynet-for-woocommerce' ); ?></button>
 				<p class="description"><?php esc_html_e( 'Added to order numbers in test mode so they do not collide with other users of the shared test account.', 'paynet-for-woocommerce' ); ?></p>
 			</td>
 		</tr>
@@ -278,7 +279,8 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 	public function process_admin_options() {
 		check_admin_referer( 'woocommerce-settings' );
 
-		if ( isset( $_POST['paynet_wc_regenerate_salt'] ) && current_user_can( 'manage_woocommerce' ) ) {
+		// "Regenerate" sets this flag and clicks the regular Save button (WooCommerce saves only on "save").
+		if ( ! empty( $_POST['paynet_wc_regenerate_salt'] ) && current_user_can( 'manage_woocommerce' ) ) {
 			update_option( self::SALT_OPTION, Paynet_WC_Order_Number::new_salt(), false );
 		}
 

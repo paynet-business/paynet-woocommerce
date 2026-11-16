@@ -6,8 +6,7 @@ const SETTINGS = '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=payn
 async function setMode( page, mode ) {
 	await page.goto( SETTINGS );
 	await page.selectOption( '#woocommerce_paynet_wc_mode', mode );
-	await page.click( 'button[name="save"]' );
-	await page.waitForLoadState( 'networkidle' );
+	await Promise.all( [ page.waitForNavigation(), page.click( 'button[name="save"]' ) ] );
 }
 
 test.describe.configure( { mode: 'serial' } );
@@ -35,20 +34,28 @@ test( 'S2-3 Callback URL is shown with the test-mode hint', async ( { page } ) =
 
 test( 'S2-4 Test salt is 6 digits and "Regenerate" changes it', async ( { page } ) => {
 	await page.goto( SETTINGS );
-	const salt = page.locator( 'button[name="paynet_wc_regenerate_salt"]' ).locator( 'xpath=preceding-sibling::input' );
+	const salt = page.locator( '.paynet-wc-regenerate-salt' ).locator( 'xpath=preceding-sibling::input[@type="text"]' );
 	const before = await salt.inputValue();
 	expect( before ).toMatch( /^\d{6}$/ );
-	await page.click( 'button[name="paynet_wc_regenerate_salt"]' );
-	await page.waitForLoadState( 'networkidle' );
-	const after = await page.locator( 'button[name="paynet_wc_regenerate_salt"]' ).locator( 'xpath=preceding-sibling::input' ).inputValue();
+	await Promise.all( [ page.waitForNavigation(), page.click( '.paynet-wc-regenerate-salt' ) ] );
+	const after = await page.locator( '.paynet-wc-regenerate-salt' ).locator( 'xpath=preceding-sibling::input[@type="text"]' ).inputValue();
 	expect( after ).toMatch( /^\d{6}$/ );
 	expect( after ).not.toBe( before );
+} );
+
+test( 'S2-4b Pressing Enter in a settings field does not change the salt', async ( { page } ) => {
+	await page.goto( SETTINGS );
+	const salt = () => page.locator( '.paynet-wc-regenerate-salt' ).locator( 'xpath=preceding-sibling::input[@type="text"]' ).inputValue();
+	const before = await salt();
+	await page.fill( '#woocommerce_paynet_wc_title', 'Card, Apple Pay, Google Pay (Paynet)' );
+	await Promise.all( [ page.waitForNavigation(), page.press( '#woocommerce_paynet_wc_title', 'Enter' ) ] );
+	expect( await salt() ).toBe( before );
 } );
 
 test( 'S2-5 Live mode: no test notice, no salt, hint "send this address to Paynet"', async ( { page } ) => {
 	await setMode( page, 'live' );
 	await expect( page.locator( '.paynet-wc-test-notice' ) ).toHaveCount( 0 );
-	await expect( page.locator( 'button[name="paynet_wc_regenerate_salt"]' ) ).toHaveCount( 0 );
+	await expect( page.locator( '.paynet-wc-regenerate-salt' ) ).toHaveCount( 0 );
 	await expect( page.getByText( 'Send this address to Paynet for your sale area' ) ).toBeVisible();
 	await setMode( page, 'test' );
 } );
