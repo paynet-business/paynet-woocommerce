@@ -59,6 +59,10 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 		$this->init_form_fields();
 		$this->init_settings();
 
+		if ( 'yes' === $this->get_option( 'saved_cards', 'no' ) ) {
+			$this->supports[] = 'tokenization'; // Shows "My account → Payment methods" (ТЗ разд. 9б).
+		}
+
 		$this->title       = $this->get_option( 'title' );
 		$this->description = $this->get_option( 'description' );
 		$this->enabled     = $this->get_option( 'enabled' );
@@ -130,6 +134,25 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 			$this->payments = new Paynet_WC_Payment( $this );
 		}
 		return $this->payments;
+	}
+
+	/**
+	 * Saved cards.
+	 *
+	 * @return Paynet_WC_Cards
+	 */
+	public function cards() {
+		return new Paynet_WC_Cards( $this );
+	}
+
+	/**
+	 * Description and, for a logged-in customer with saved cards, the card list (ТЗ разд. 9б).
+	 */
+	public function payment_fields() {
+		parent::payment_fields();
+		if ( is_user_logged_in() && ! is_add_payment_method_page() ) {
+			$this->cards()->render_list( get_current_user_id() );
+		}
 	}
 
 	/**
@@ -554,6 +577,7 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 		if ( ! $order ) {
 			return array( 'result' => 'failure' );
 		}
+		$this->cards()->remember_choice( $order );
 		$result = $this->payments()->pay( $order );
 		if ( isset( $result['redirect'] ) ) {
 			return array(

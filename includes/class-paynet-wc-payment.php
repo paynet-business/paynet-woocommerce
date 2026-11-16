@@ -318,6 +318,7 @@ class Paynet_WC_Payment {
 				 * @param WC_Order $order     Order.
 				 */
 				'multiline'   => (bool) apply_filters( 'paynet_wc_multiline_products', false, $order ),
+				'card_link_hash' => $user_id > 0 ? $this->gateway->cards()->hash_for_order( $order, $mode ) : '',
 			)
 		);
 	}
@@ -460,7 +461,11 @@ class Paynet_WC_Payment {
 		if ( '' === $stored_id && '' !== $payment_id ) {
 			$order->update_meta_data( self::META_PAYMENT_ID, $payment_id );
 		}
-		if ( is_array( $notice ) && ! empty( $notice['MoneyType'] ) && empty( $problems ) ) {
+		// Actual payment method: `payer.moneyType` of the API response (also in test mode, where no notification
+		// arrives); the unsigned notification value only as a fallback. Needed for the CASH_INVOICE refund rule.
+		if ( ! empty( $payment['payer']['moneyType'] ) ) {
+			$order->update_meta_data( self::META_MONEY_TYPE, Paynet_WC_Text::clean( $payment['payer']['moneyType'], 32 ) );
+		} elseif ( is_array( $notice ) && ! empty( $notice['MoneyType'] ) && empty( $problems ) ) {
 			$order->update_meta_data( self::META_MONEY_TYPE, Paynet_WC_Text::clean( $notice['MoneyType'], 32 ) );
 		}
 
@@ -477,13 +482,18 @@ class Paynet_WC_Payment {
 		$order->update_meta_data( self::META_FINAL, 'paid' );
 		$order->save();
 		$order->payment_complete( $payment_id );
+		$this->gateway->cards()->save_from_payment( $order, $payment, $this->order_mode( $order ) );
 
 		$details = array( self::money( $paid, $currency ) );
-		if ( is_array( $notice ) && ! empty( $notice['MoneyType'] ) ) {
+		if ( ! empty( $payment['payer']['moneyType'] ) ) {
+			$details[] = Paynet_WC_Text::clean( $payment['payer']['moneyType'], 32 );
+		} elseif ( is_array( $notice ) && ! empty( $notice['MoneyType'] ) ) {
 			$details[] = Paynet_WC_Text::clean( $notice['MoneyType'], 32 );
 		}
 		if ( is_array( $notice ) && ! empty( $notice['CardMask'] ) ) {
 			$details[] = Paynet_WC_Text::clean( $notice['CardMask'], 32 );
+		} elseif ( ! empty( $payment['payer']['cardMask'] ) ) {
+			$details[] = Paynet_WC_Text::clean( $payment['payer']['cardMask'], 32 );
 		}
 		$order->add_order_note(
 			sprintf(

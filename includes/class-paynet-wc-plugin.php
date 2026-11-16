@@ -83,6 +83,7 @@ final class Paynet_WC_Plugin {
 		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-payment.php';
 		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-refund-rules.php';
 		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-refund.php';
+		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-cards.php';
 		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-webhook.php';
 		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-gateway.php';
 		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-admin.php';
@@ -94,6 +95,7 @@ final class Paynet_WC_Plugin {
 		add_action( 'wp_ajax_paynet_wc_check_connection', array( 'Paynet_WC_Gateway', 'ajax_check_connection' ) );
 		add_action( 'woocommerce_thankyou_' . Paynet_WC_Gateway::ID, array( 'Paynet_WC_Gateway', 'thankyou_text' ) );
 		Paynet_WC_Admin::init();
+		Paynet_WC_Cards::hooks();
 		// WooCommerce fires woocommerce_blocks_loaded on plugins_loaded before this init (priority 11) runs.
 		if ( did_action( 'woocommerce_blocks_loaded' ) ) {
 			$this->register_blocks();
