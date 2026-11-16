@@ -10,12 +10,11 @@ FONT="${FONT:-/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf}"
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
-esc() { printf '%s' "$1" | sed -e "s/\\\\/\\\\\\\\/g" -e "s/:/\\\\:/g" -e "s/'/\\\\'/g" -e "s/%/\\\\%/g"; }
-
-card() { # $1 = text, $2 = output
+card() { # $1 = text, $2 = output. Text is read from a file: commas, quotes and % in titles need no escaping.
+	printf '%s' "$1" | fold -s -w 56 > "$2.txt"
 	ffmpeg -nostdin -loglevel error -y -f lavfi -i "color=c=0x1d2327:s=1280x720:d=2:r=25" \
 		-f lavfi -i "anullsrc=r=44100:cl=mono" -t 2 \
-		-vf "drawtext=fontfile=${FONT}:text='$(esc "$1")':fontcolor=white:fontsize=40:x=(w-text_w)/2:y=(h-text_h)/2" \
+		-vf "drawtext=fontfile=${FONT}:textfile='$2.txt':expansion=none:fontcolor=white:fontsize=40:line_spacing=12:x=(w-text_w)/2:y=(h-text_h)/2" \
 		-c:v libx264 -preset veryfast -pix_fmt yuv420p -c:a aac -shortest "$2"
 }
 

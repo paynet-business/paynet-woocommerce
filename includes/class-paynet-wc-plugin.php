@@ -76,12 +76,59 @@ final class Paynet_WC_Plugin {
 			return;
 		}
 
+		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-text.php';
+		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-signature.php';
+		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-order-body.php';
+		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-api.php';
+		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-payment.php';
+		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-webhook.php';
 		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-gateway.php';
+		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-admin.php';
 
 		add_filter( 'woocommerce_payment_gateways', array( $this, 'register_gateway' ) );
-		add_action( 'woocommerce_blocks_loaded', array( $this, 'register_blocks' ) );
+		// Earlier than the old plugin's handler of the same address (ТЗ разд. 11).
+		add_action( 'woocommerce_api_wc_gateway_paynet', array( $this, 'handle_api' ), 5 );
+		add_action( Paynet_WC_Payment::HOOK_CHECK, array( $this, 'run_check' ), 10, 3 );
+		add_action( 'wp_ajax_paynet_wc_check_connection', array( 'Paynet_WC_Gateway', 'ajax_check_connection' ) );
+		add_action( 'woocommerce_thankyou_' . Paynet_WC_Gateway::ID, array( 'Paynet_WC_Gateway', 'thankyou_text' ) );
+		Paynet_WC_Admin::init();
+		// WooCommerce fires woocommerce_blocks_loaded on plugins_loaded before this init (priority 11) runs.
+		if ( did_action( 'woocommerce_blocks_loaded' ) ) {
+			$this->register_blocks();
+		} else {
+			add_action( 'woocommerce_blocks_loaded', array( $this, 'register_blocks' ) );
+		}
 		add_action( 'admin_notices', array( $this, 'notice_old_plugin' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( PAYNET_WC_FILE ), array( $this, 'action_links' ) );
+	}
+
+	/**
+	 * Gateway instance (the one WooCommerce loaded, so settings are shared).
+	 *
+	 * @return Paynet_WC_Gateway
+	 */
+	public static function gateway() {
+		$gateways = WC()->payment_gateways() ? WC()->payment_gateways()->payment_gateways() : array();
+		return isset( $gateways[ Paynet_WC_Gateway::ID ] ) ? $gateways[ Paynet_WC_Gateway::ID ] : new Paynet_WC_Gateway();
+	}
+
+	/**
+	 * `?wc-api=WC_Gateway_Paynet`.
+	 */
+	public function handle_api() {
+		$handler = new Paynet_WC_Webhook( self::gateway() );
+		$handler->handle();
+	}
+
+	/**
+	 * Background check (Action Scheduler).
+	 *
+	 * @param int    $order_id     Order ID.
+	 * @param string $paynet_order Paynet Order.
+	 * @param int    $step         Step.
+	 */
+	public function run_check( $order_id, $paynet_order = '', $step = 0 ) {
+		self::gateway()->payments()->run_check( (int) $order_id, (string) $paynet_order, (int) $step );
 	}
 
 	/**

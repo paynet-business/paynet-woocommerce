@@ -59,9 +59,16 @@ jobs:
           build-dir: build/paynet-for-woocommerce
 
   e2e:
-    name: E2E + stage video
+    name: E2E (HPOS ${{ matrix.hpos }})
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        hpos: ['on', 'off']
+    env:
+      STAGE: '3'
+      HPOS: ${{ matrix.hpos }}
     defaults:
       run:
         working-directory: e2e
@@ -82,7 +89,10 @@ jobs:
         run: |
           e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_currency MDL
           e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_default_country MD
+          e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_coming_soon no
           e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_onboarding_profile '{"skipped":true}' --format=json
+          # HPOS on/off is set by the E2E setup (after WooCommerce finishes installing on the first web request).
+          e2e/node_modules/.bin/wp-env run cli wp plugin list --fields=name,version,status
         env:
           WP_ENV_HOME: ${{ runner.temp }}/wp-env
       - name: Playwright
@@ -91,35 +101,44 @@ jobs:
         id: pw
       - name: Report (Summary)
         if: always()
-        run: node ../tools/e2e-report.js results/results.json "$GITHUB_STEP_SUMMARY" results/videos.tsv
+        run: node ../tools/e2e-report.js results/results.json "$GITHUB_STEP_SUMMARY" results/videos.tsv "E2E scenarios — HPOS ${HPOS}" "stage${STAGE}.spec.js" || true
       - name: Stage video
-        if: always()
+        if: always() && matrix.hpos == 'on'
         run: |
           sudo apt-get install -y -qq ffmpeg fonts-dejavu-core > /dev/null
-          bash ../tools/stage-video.sh results/videos.tsv results/stage-video.mp4 "Paynet for WooCommerce — stage 2 — ${GITHUB_SHA::7}"
+          bash ../tools/stage-video.sh results/videos.tsv "results/video-stage-${STAGE}.mp4" "Paynet for WooCommerce — stage ${STAGE} — ${GITHUB_SHA::7}"
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && matrix.hpos == 'on'
         with:
-          name: stage-video
-          path: e2e/results/stage-video.mp4
+          name: video-stage-${{ env.STAGE }}
+          path: e2e/results/video-stage-${{ env.STAGE }}.mp4
           retention-days: 90
       - uses: actions/upload-artifact@v4
         if: failure() || steps.pw.outcome == 'failure'
         with:
-          name: e2e-details
-          path: e2e/results/artifacts
+          name: e2e-details-hpos-${{ matrix.hpos }}
+          path: |
+            e2e/results/artifacts
+            e2e/results/results.json
           retention-days: 30
+      - name: WordPress debug log (on failure)
+        if: failure() || steps.pw.outcome == 'failure'
+        working-directory: .
+        run: e2e/node_modules/.bin/wp-env run cli sh -c 'tail -n 80 wp-content/debug.log 2>/dev/null; ls wp-content/uploads/wc-logs 2>/dev/null; tail -n 60 wp-content/uploads/wc-logs/paynet-for-woocommerce-*.log 2>/dev/null' || true
+        env:
+          WP_ENV_HOME: ${{ runner.temp }}/wp-env
       - name: Playground link
-        if: always()
+        if: always() && matrix.hpos == 'on'
         run: |
           REF="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
-          URL="https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${REF}/playground/blueprint.json"
+          BP=$(sed "s#\"ref\": \"main\"#\"ref\": \"${REF}\"#" ../playground/blueprint.json | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>process.stdout.write(encodeURIComponent(JSON.stringify(JSON.parse(s)))))')
+          URL="https://playground.wordpress.net/#${BP}"
           {
             echo "## Playground"
             echo ""
-            echo "Open in the browser (no installation): [WordPress Playground](${URL})"
+            echo "Open in the browser (no installation): [WordPress Playground — branch ${REF}](${URL})"
             echo ""
-            echo "_Works only if the repository is public. The blueprint installs the plugin from the main branch._"
+            echo "_Test mode with the public test credentials and a demo product. Notifications never reach Playground; the status is updated when you return from the Paynet page._"
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Fail if scenarios failed
         if: steps.pw.outcome == 'failure'
