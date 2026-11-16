@@ -79,10 +79,11 @@ function baseOrder( order ) {
 
 // Field setters and getters (value read back from GET /api/order/merchant/{Order}).
 const FIELDS = {
-	'Services.Name': { set: ( b, v ) => ( b.Services[ 0 ].Name = v ), get: ( p ) => p.services?.[ 0 ]?.name },
-	'Services.Description': { set: ( b, v ) => ( b.Services[ 0 ].Description = v ), get: ( p ) => p.services?.[ 0 ]?.description },
-	'Products.Name': { set: ( b, v ) => ( b.Services[ 0 ].Products[ 0 ].Name = v ), get: ( p ) => p.services?.[ 0 ]?.products?.[ 0 ]?.name },
-	'Products.Description': { set: ( b, v ) => ( b.Services[ 0 ].Products[ 0 ].Description = v ), get: ( p ) => p.services?.[ 0 ]?.products?.[ 0 ]?.description },
+	// GET returns services[] in a different shape than the request: no reliable read-back, accept/reject only.
+	'Services.Name': { set: ( b, v ) => ( b.Services[ 0 ].Name = v ), get: () => undefined },
+	'Services.Description': { set: ( b, v ) => ( b.Services[ 0 ].Description = v ), get: () => undefined },
+	'Products.Name': { set: ( b, v ) => ( b.Services[ 0 ].Products[ 0 ].Name = v ), get: () => undefined },
+	'Products.Description': { set: ( b, v ) => ( b.Services[ 0 ].Products[ 0 ].Description = v ), get: () => undefined },
 	'Products.Code': { set: ( b, v ) => ( b.Services[ 0 ].Products[ 0 ].Code = v ), get: () => undefined },
 	'Customer.Code': { set: ( b, v ) => ( b.Customer.Code = v ), get: ( p ) => p.customer?.code },
 	'Customer.NameFirst': { set: ( b, v ) => ( b.Customer.NameFirst = v ), get: ( p ) => p.customer?.nameFirst },
@@ -183,8 +184,41 @@ async function rule( name, mutate, opts = {} ) {
 async function main() {
 	const a = await auth();
 	results.auth = a;
+	const only = ( process.env.PROBE_ONLY || '' ).split( ',' ).filter( Boolean );
+	const want = ( group ) => ! only.length || only.includes( group );
+
+	if ( want( 'round2' ) ) {
+		const shape = await rule( 'GET services shape (Name=SVC-NAME, Description=SVC-DESC, product P-NAME/P-DESC)', ( b ) => {
+			b.Services[ 0 ].Name = 'SVC-NAME';
+			b.Services[ 0 ].Description = 'SVC-DESC';
+			b.Services[ 0 ].Products[ 0 ].Name = 'P-NAME';
+			b.Services[ 0 ].Products[ 0 ].Description = 'P-DESC';
+		}, { readBack: ( p ) => JSON.stringify( p.services ) } );
+		for ( const m of [ 3, 4, 5, 6, 8, 10, 15 ] ) {
+			await rule( `ExpiryDate in ${ m } min`, ( b ) => ( b.ExpiryDate = chisinau( m ) ) );
+		}
+		await rule( 'Emoji in product name', ( b ) => ( b.Services[ 0 ].Products[ 0 ].Name = 'Cake 🎂 Țară' ), { readBack: ( p ) => JSON.stringify( p.services?.[ 0 ] ) } );
+		const base = await rule( 'Create (repeat tests, round 2)', () => {} );
+		const later = JSON.parse( JSON.stringify( base.body ) );
+		later.ExpiryDate = chisinau( 75 );
+		const r1 = await call( 'POST', '/api/order', later );
+		results.rules.push( { name: 'Same Order, ExpiryDate +15 min', status: r1.status, code: r1.json?.code || '', detail: ( r1.json?.details || '' ).slice( 0, 100 ), extra: 'same paymentId: ' + ( r1.json?.paymentId === base.r.json?.paymentId ) + ', same link: ' + ( r1.json?.paymentLink === base.r.json?.paymentLink ) + ', expiry now: ' + r1.json?.expiryDate } );
+		const amt = JSON.parse( JSON.stringify( base.body ) );
+		amt.Services[ 0 ].Amount = 400;
+		Object.assign( amt.Services[ 0 ].Products[ 0 ], { UnitPrice: 400, Amount: 400, TotalAmount: 400 } );
+		const r2 = await call( 'POST', '/api/order', amt );
+		results.rules.push( { name: 'Same Order, Amount 300 → 400', status: r2.status, code: r2.json?.code || '', detail: ( r2.json?.details || '' ).slice( 0, 100 ), extra: 'same paymentId: ' + ( r2.json?.paymentId === base.r.json?.paymentId ) + ', amount now: ' + JSON.stringify( r2.json?.amount ) } );
+		const nm = JSON.parse( JSON.stringify( base.body ) );
+		nm.Services[ 0 ].Products[ 0 ].Name = 'Other name';
+		const r3 = await call( 'POST', '/api/order', nm );
+		results.rules.push( { name: 'Same Order, product name changed', status: r3.status, code: r3.json?.code || '', detail: ( r3.json?.details || '' ).slice( 0, 100 ), extra: 'same paymentId: ' + ( r3.json?.paymentId === base.r.json?.paymentId ) } );
+	}
+	if ( ! want( 'rules' ) && ! want( 'lengths' ) ) {
+		return finish();
+	}
 
 	// Rules that affect the plugin.
+	if ( want( 'rules' ) ) {
 	await rule( 'Products sum (200) ≠ Services.Amount (300)', ( b ) => {
 		b.Services[ 0 ].Products[ 0 ].Amount = 200;
 		b.Services[ 0 ].Products[ 0 ].TotalAmount = 200;
@@ -257,13 +291,19 @@ async function main() {
 	results.rules.push( { name: 'GET with invalid token', status: bad.status, code: '', detail: ( await bad.text() ).slice( 0, 160 ), extra: '' } );
 	const authBad = await fetch( BASE + '/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify( { grantType: 'password', username: USER, password: 'wrong' } ) } );
 	results.rules.push( { name: 'POST /auth wrong password', status: authBad.status, code: '', detail: ( await authBad.text() ).slice( 0, 200 ), extra: '' } );
+	}
 
 	// Field lengths.
-	for ( const f of Object.keys( FIELDS ) ) {
+	const fieldList = process.env.PROBE_FIELDS ? process.env.PROBE_FIELDS.split( ',' ) : Object.keys( FIELDS );
+	for ( const f of want( 'lengths' ) ? fieldList : [] ) {
 		results.lengths[ f ] = await probeField( f );
 		console.log( f, results.lengths[ f ].maxAscii, results.lengths[ f ].failMode, results.lengths[ f ].cyrAtMax || '' );
 	}
 
+	return finish();
+}
+
+function finish() {
 	fs.writeFileSync( out, JSON.stringify( results, null, 2 ) );
 
 	let md = '## API probes (test environment)\n\n### Field lengths\n\n| Field | Max accepted (ASCII) | Above the max | Cyrillic at max |\n|---|---|---|---|\n';

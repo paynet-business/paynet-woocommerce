@@ -4,6 +4,13 @@ name: API probes
 # Finds field limits and request rules the documentation does not state (ТЗ В-10).
 on:
   workflow_dispatch:
+    inputs:
+      only:
+        description: 'Groups: round2, rules, lengths (empty = all)'
+        default: ''
+      fields:
+        description: 'Length probes: comma-separated fields (empty = all)'
+        default: ''
   push:
     branches: ['stage-*']
     paths: ['tools/probe-api.js', '.github/workflows/probe.yml']
@@ -21,6 +28,9 @@ jobs:
         with:
           node-version: '22'
       - run: node tools/probe-api.js probe-results.json
+        env:
+          PROBE_ONLY: ${{ inputs.only || 'round2,lengths' }}
+          PROBE_FIELDS: ${{ inputs.fields || 'Services.Name,Services.Description' }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
