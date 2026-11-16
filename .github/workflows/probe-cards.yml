@@ -4,6 +4,10 @@ name: API probes — saved cards and refunds
 # and prints findings to the log (ТЗ В-11…В-13). No WordPress involved.
 on:
   workflow_dispatch:
+    inputs:
+      file:
+        description: 'Probe file in e2e/probe (empty = latest round)'
+        default: ''
   push:
     branches: ['stage-*']
     paths: ['e2e/probe/**', '.github/workflows/probe-cards.yml']
@@ -25,4 +29,4 @@ jobs:
           node-version: '22'
       - run: npm install --no-audit --no-fund
       - run: npx playwright install --with-deps chromium
-      - run: npx playwright test -c probe/probe.config.js
+      - run: npx playwright test -c probe/probe.config.js ${{ inputs.file || 'cards2' }}

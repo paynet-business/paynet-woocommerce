@@ -54,7 +54,7 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 		$this->has_fields         = false;
 		$this->method_title       = __( 'Paynet', 'paynet-for-woocommerce' );
 		$this->method_description = __( 'Card, Apple Pay and Google Pay payments through the Paynet payment page.', 'paynet-for-woocommerce' );
-		$this->supports           = array( 'products' );
+		$this->supports           = array( 'products', 'refunds' );
 
 		$this->init_form_fields();
 		$this->init_settings();
@@ -563,6 +563,25 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 		}
 		wc_add_notice( isset( $result['error'] ) ? $result['error'] : __( 'Could not proceed to payment, please try again.', 'paynet-for-woocommerce' ), 'error' );
 		return array( 'result' => 'failure' );
+	}
+
+	/**
+	 * Refund through Paynet (ТЗ разд. 9).
+	 *
+	 * @param int        $order_id Order ID.
+	 * @param float|null $amount   Amount.
+	 * @param string     $reason   Reason.
+	 * @return bool|WP_Error
+	 */
+	public function process_refund( $order_id, $amount = null, $reason = '' ) {
+		$order = wc_get_order( $order_id );
+		if ( ! $order ) {
+			return new WP_Error( 'paynet_refund_order', __( 'Order not found.', 'paynet-for-woocommerce' ) );
+		}
+		if ( null === $amount ) {
+			$amount = $order->get_remaining_refund_amount();
+		}
+		return ( new Paynet_WC_Refund( $this ) )->refund( $order, $amount, (string) $reason );
 	}
 
 	/**

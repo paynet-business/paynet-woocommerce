@@ -81,6 +81,8 @@ final class Paynet_WC_Plugin {
 		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-order-body.php';
 		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-api.php';
 		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-payment.php';
+		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-refund-rules.php';
+		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-refund.php';
 		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-webhook.php';
 		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-gateway.php';
 		require_once PAYNET_WC_DIR . 'includes/class-paynet-wc-admin.php';
