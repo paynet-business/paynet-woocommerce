@@ -369,7 +369,7 @@ test.describe( 'customer', () => {
 		await h.occupyOrder( state.salt, y.id, 2 );
 		await page.goto( y.pay_url );
 		await page.click( '#place_order' );
-		await expect( page.locator( '.woocommerce-error, .woocommerce-NoticeGroup' ).first() ).toContainText( 'Could not proceed to payment', { timeout: 60000 } );
+		await expect( page.getByText( 'Could not proceed to payment, please try again.' ).first() ).toBeVisible( { timeout: 60000 } );
 		const oy = await h.order( request, y.id );
 		expect( oy.notes.join( '\n' ) ).toContain( 'Regenerate' );
 		expect( oy.status ).toBe( 'pending' );
