@@ -21,6 +21,7 @@ test.beforeEach( async ( { request } ) => {
 
 // On failure: where the browser was and what it showed — readable in the CI log (artifacts are for people).
 test.afterEach( async ( { page, request }, testInfo ) => {
+	await h.setMocks( request, [] ).catch( () => {} ); // A failed scenario must not leave its mocks to the next one.
 	if ( testInfo.status === testInfo.expectedStatus ) {
 		return;
 	}

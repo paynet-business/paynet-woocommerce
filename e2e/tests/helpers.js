@@ -182,6 +182,17 @@ async function classicPlaceOrder( page, ids, opts = {} ) {
 		}
 	} );
 	await waitUnblocked( page );
+	// Moldova requires "Municipality / District".
+	await page.evaluate( () => {
+		const el = document.querySelector( 'select#billing_state' );
+		if ( el && ! el.value && window.jQuery ) {
+			const opt = Array.from( el.options ).find( ( o ) => o.value );
+			if ( opt ) {
+				window.jQuery( el ).val( opt.value ).trigger( 'change' );
+			}
+		}
+	} );
+	await waitUnblocked( page );
 	await fillIfVisible( page, '#billing_first_name', first );
 	await fillIfVisible( page, '#billing_last_name', last );
 	await fillIfVisible( page, '#billing_address_1', 'Str. Test 1' );
@@ -194,7 +205,7 @@ async function classicPlaceOrder( page, ids, opts = {} ) {
 	if ( await radio.isVisible() ) {
 		await radio.check();
 	}
-	await expect( page.locator( '.payment_method_paynet_wc' ) ).toContainText( 'Paynet' );
+	await expect( page.locator( 'li.payment_method_paynet_wc' ) ).toContainText( 'Paynet' );
 	await waitUnblocked( page );
 	await page.click( '#place_order' );
 }
@@ -208,6 +219,13 @@ async function blocksPlaceOrder( page, ids, { email = 'e2e-blocks@example.com' }
 		const country = page.locator( `select#${ prefix }-country` );
 		if ( ( await country.count() ) && ( await country.isVisible() ) && ! ( await country.inputValue() ) ) {
 			await country.selectOption( 'MD' );
+		}
+		const state = page.locator( `select#${ prefix }-state` );
+		if ( ( await state.count() ) && ( await state.isVisible() ) && ! ( await state.inputValue() ) ) {
+			const value = await state.evaluate( ( el ) => ( Array.from( el.options ).find( ( o ) => o.value ) || {} ).value );
+			if ( value ) {
+				await state.selectOption( value );
+			}
 		}
 		await fillIfVisible( page, `#${ prefix }-first_name`, 'Ion' );
 		await fillIfVisible( page, `#${ prefix }-last_name`, 'Popescu' );
