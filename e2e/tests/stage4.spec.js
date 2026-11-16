@@ -81,9 +81,12 @@ async function refundInAdmin( page, id, amount, reason ) {
 	await page.fill( '#refund_reason', reason );
 	await page.waitForTimeout( 500 );
 	await expect( page.locator( 'button.do-api-refund' ) ).toContainText( 'Paynet' );
+	// Wait for WooCommerce's refund request to finish (Paynet may take several seconds), then for the reload / alert.
+	const done = page.waitForResponse( ( r ) => r.url().includes( 'admin-ajax.php' ) && String( r.request().postData() || '' ).includes( 'woocommerce_refund_line_items' ), { timeout: 120000 } );
 	await page.click( 'button.do-api-refund' );
-	await page.waitForTimeout( 6000 );
-	await page.waitForLoadState( 'networkidle' ).catch( () => {} );
+	await done;
+	await page.waitForTimeout( 3000 );
+	await page.waitForLoadState( 'load', { timeout: 30000 } ).catch( () => {} );
 	page.off( 'dialog', onDialog );
 	return dialogs;
 }
@@ -266,10 +269,11 @@ test.describe( 'saved cards', () => {
 
 		const sent = ( await h.log( request ) ).requests.filter( ( r ) => r.path === '/api/order' ).pop();
 		expect( String( sent.body.CardLinkHash || '' ).startsWith( visa.hash ), 'CardLinkHash of the chosen card sent' ).toBe( true );
-		expect( sent.body.Customer.Code ).toBe( String( ids.customer ) );
+		const salt = ( await h.helperState( request ) ).salt;
+		expect( sent.body.Customer.Code, 'test mode: salt + user ID' ).toBe( `${ salt }-${ ids.customer }` );
 
 		// Saved-card mode of the Paynet page: the "new card" switch is shown and not selected, no card number field.
-		await page.waitForLoadState( 'networkidle' ).catch( () => {} );
+		await page.waitForLoadState( 'networkidle', { timeout: 15000 } ).catch( () => {} );
 		await page.waitForTimeout( 3000 );
 		await expect( page.locator( '#new-card' ) ).toBeVisible();
 		await expect( page.locator( '#new-card' ) ).not.toBeChecked();

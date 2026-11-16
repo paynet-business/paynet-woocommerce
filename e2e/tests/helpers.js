@@ -114,7 +114,7 @@ async function sendNotification( request, n, hash ) {
 // Fill the Paynet test payment page (card fields in Cybersource iframes) and press Pay — same as the docs portal E2E.
 async function payOnPaynet( page, card = CARD ) {
 	await page.waitForURL( /paynet\.md/, { timeout: 60000 } );
-	await page.waitForLoadState( 'networkidle' ).catch( () => {} );
+	await page.waitForLoadState( 'networkidle', { timeout: 20000 } ).catch( () => {} );
 	await page.waitForTimeout( 2500 );
 	let numberFrame;
 	let cvvFrame;

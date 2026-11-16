@@ -124,6 +124,6 @@
 		edit: el( 'div', null, decode( data.description || '' ) ),
 		canMakePayment: function () { return true; },
 		ariaLabel: title,
-		supports: { features: data.supports || [ 'products' ] }
+		supports: { features: data.supports || [ 'products' ], showSavedCards: false, showSaveOption: false }
 	} );
 } )();

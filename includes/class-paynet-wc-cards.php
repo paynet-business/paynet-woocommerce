@@ -67,6 +67,35 @@ class Paynet_WC_Cards {
 		add_action( 'template_redirect', array( __CLASS__, 'account_delete_fallback' ) );
 		add_action( 'wp_login', array( __CLASS__, 'remove_expired_on_login' ), 10, 2 );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'scripts' ) );
+		add_filter( 'woocommerce_saved_payment_methods_list', array( __CLASS__, 'hide_from_checkout_list' ), 20, 2 );
+	}
+
+	/**
+	 * At checkout, Paynet cards are shown only in the plugin's own list under the payment method (ТЗ разд. 9б).
+	 * The Checkout block would otherwise list them on top as separate options. "My account" keeps them.
+	 *
+	 * @param array $list    Saved methods by type.
+	 * @param int   $user_id User ID.
+	 * @return array
+	 */
+	public static function hide_from_checkout_list( $list, $user_id ) {
+		if ( ! is_array( $list ) || ! function_exists( 'is_checkout' ) || ! is_checkout() || is_account_page() ) {
+			return $list;
+		}
+		foreach ( $list as $type => $items ) {
+			$list[ $type ] = array_values(
+				array_filter(
+					(array) $items,
+					static function ( $item ) {
+						return ! isset( $item['method']['gateway'] ) || Paynet_WC_Gateway::ID !== $item['method']['gateway'];
+					}
+				)
+			);
+			if ( ! $list[ $type ] ) {
+				unset( $list[ $type ] );
+			}
+		}
+		return $list;
 	}
 
 	/**
@@ -81,11 +110,27 @@ class Paynet_WC_Cards {
 	/**
 	 * `Customer.Code` of a registered customer (ТЗ разд. 9б).
 	 *
-	 * @param int $user_id User ID.
+	 * Live: the user ID. Test: "<salt>-<user ID>" — the test sale area is shared by all developers, and the same
+	 * test card of the same code gets the same `CardLinkHash` (В-12), so without the salt one site would see and
+	 * delete another site's test cards. [Пр] Р4-2.
+	 *
+	 * @param int             $user_id User ID.
+	 * @param int|string|null $salt    Test-mode salt (null in live mode).
 	 * @return string
 	 */
-	public static function customer_code( $user_id ) {
-		return (string) (int) $user_id;
+	public static function customer_code( $user_id, $salt = null ) {
+		return ( null === $salt || '' === (string) $salt ? '' : (int) $salt . '-' ) . (int) $user_id;
+	}
+
+	/**
+	 * `Customer.Code` of a user in a mode.
+	 *
+	 * @param int    $user_id User ID.
+	 * @param string $mode    test|live.
+	 * @return string
+	 */
+	public static function code_for( $user_id, $mode ) {
+		return self::customer_code( $user_id, 'test' === $mode ? Paynet_WC_Gateway::get_salt() : null );
 	}
 
 	/**
@@ -107,6 +152,9 @@ class Paynet_WC_Cards {
 			}
 			if ( $token->get_meta( self::T_MODE ) !== $mode || $token->get_meta( self::T_SALE_AREA ) !== $area ) {
 				continue; // Test cards never show in live mode and the reverse (ТЗ разд. 9б).
+			}
+			if ( (string) $token->get_meta( self::T_CUSTOMER ) !== self::code_for( $user_id, $mode ) ) {
+				continue; // Saved under another customer code (test salt regenerated): Paynet would not show it.
 			}
 			if ( self::is_expired( $token->get_expiry_month(), $token->get_expiry_year() ) ) {
 				continue;
@@ -217,7 +265,7 @@ class Paynet_WC_Cards {
 		if ( '' === $hash ) {
 			return; // Customer unticked "save card" on the Paynet page.
 		}
-		$code = self::customer_code( $user_id );
+		$code = self::code_for( $user_id, $mode );
 		if ( isset( $payment['customer']['code'] ) && (string) $payment['customer']['code'] !== $code ) {
 			$this->gateway->log( 'Saved card skipped: customer code in the payment differs from the order customer.' );
 			return;
@@ -296,7 +344,7 @@ class Paynet_WC_Cards {
 			array(
 				'CardLinkHash' => $token->get_token(),
 				'SaleAreaCode' => (string) $token->get_meta( self::T_SALE_AREA ),
-				'CustomerCode' => '' !== $code ? $code : self::customer_code( $token->get_user_id() ),
+				'CustomerCode' => '' !== $code ? $code : self::code_for( $token->get_user_id(), $mode ),
 			),
 			20
 		);

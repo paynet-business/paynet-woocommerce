@@ -300,7 +300,7 @@ class Paynet_WC_Payment {
 				'expiry'      => null === $expiry ? '' : $expiry,
 				'lang'        => Paynet_WC_Order_Body::lang( get_locale() ),
 				'customer'    => array(
-					'code'  => $user_id > 0 ? (string) $user_id : 'guest-' . $order->get_id(),
+					'code'  => $user_id > 0 ? Paynet_WC_Cards::code_for( $user_id, $mode ) : 'guest-' . $order->get_id(),
 					'first' => $order->get_billing_first_name(),
 					'last'  => $order->get_billing_last_name(),
 					'email' => $order->get_billing_email(),

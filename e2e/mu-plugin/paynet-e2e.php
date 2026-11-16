@@ -282,7 +282,7 @@ add_action(
 						$t->set_expiry_year( isset( $p['year'] ) ? (string) $p['year'] : '2030' );
 						$t->add_meta_data( 'paynet_mode', isset( $p['mode'] ) ? (string) $p['mode'] : 'test', true );
 						$t->add_meta_data( 'paynet_sale_area', 'onlidocumentation_md', true );
-						$t->add_meta_data( 'paynet_customer', (string) (int) $req['user'], true );
+						$t->add_meta_data( 'paynet_customer', Paynet_WC_Cards::code_for( (int) $req['user'], 'test' ), true );
 						$t->save();
 						return array( 'id' => $t->get_id() ) + paynet_e2e_cards( $req );
 					},

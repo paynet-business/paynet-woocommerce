@@ -40,7 +40,9 @@ final class CardsTest extends TestCase {
 		$this->assertTrue( Paynet_WC_Cards::is_expired( 12, 2025, self::NOW ) );
 	}
 
-	public function test_customer_code_is_user_id() {
+	public function test_customer_code_live_and_test() {
 		$this->assertSame( '7', Paynet_WC_Cards::customer_code( 7 ) );
+		$this->assertSame( '482913-7', Paynet_WC_Cards::customer_code( 7, 482913 ) );
+		$this->assertLessThanOrEqual( 64, strlen( Paynet_WC_Cards::customer_code( PHP_INT_MAX, 999999 ) ), 'fits Customer.Code (64)' );
 	}
 }
