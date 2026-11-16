@@ -194,6 +194,7 @@ add_action(
 						'currency' => get_woocommerce_currency(),
 						'coming_soon' => get_option( 'woocommerce_coming_soon' ),
 						'myaccount' => wc_get_page_permalink( 'myaccount' ),
+						'payment_methods' => wc_get_account_endpoint_url( 'payment-methods' ),
 						'gateway'   => paynet_e2e_gateway_state(),
 					);
 				},

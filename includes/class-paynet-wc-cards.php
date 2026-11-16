@@ -232,6 +232,7 @@ class Paynet_WC_Cards {
 		$area = $this->gateway->credential( 'sale_area', $mode );
 
 		$token = null;
+		$new   = false;
 		foreach ( WC_Payment_Tokens::get_customer_tokens( $user_id, Paynet_WC_Gateway::ID ) as $existing ) {
 			if ( ! $existing instanceof WC_Payment_Token_CC || $existing->get_meta( self::T_MODE ) !== $mode || $existing->get_meta( self::T_SALE_AREA ) !== $area ) {
 				continue;
@@ -244,6 +245,7 @@ class Paynet_WC_Cards {
 			}
 		}
 		if ( ! $token ) {
+			$new   = true;
 			$token = new WC_Payment_Token_CC();
 			$token->set_gateway_id( Paynet_WC_Gateway::ID );
 			$token->set_user_id( $user_id );
@@ -270,6 +272,9 @@ class Paynet_WC_Cards {
 			return;
 		}
 		WC_Payment_Tokens::set_users_default( $user_id, $token->get_id() ); // Last used card is preselected.
+		if ( ! $new ) {
+			return;
+		}
 		$order->add_order_note(
 			/* translators: %s: card label */
 			sprintf( __( 'Paynet: card %s saved for the customer.', 'paynet-for-woocommerce' ), self::label( $token ) )

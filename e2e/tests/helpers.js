@@ -215,6 +215,9 @@ async function classicPlaceOrder( page, ids, opts = {} ) {
 	}
 	await expect( page.locator( 'li.payment_method_paynet_wc' ) ).toContainText( 'Paynet' );
 	await waitUnblocked( page );
+	if ( opts.card ) {
+		await page.locator( '.paynet-wc-card', { hasText: opts.card } ).locator( 'input' ).check(); // Saved card or "New card".
+	}
 	await page.click( '#place_order' );
 }
 

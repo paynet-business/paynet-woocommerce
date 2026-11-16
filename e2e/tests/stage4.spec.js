@@ -204,8 +204,7 @@ test.describe( 'saved cards', () => {
 		await expect( page.locator( '.paynet-wc-cards' ) ).toContainText( 'Visa •••• 1111' );
 		await expect( page.locator( '.paynet-wc-cards' ) ).toContainText( 'New card' );
 
-		const state = await h.helperState( request );
-		await page.goto( state.myaccount.replace( /\/?$/, '/' ) + 'payment-methods/' );
+		await page.goto( ( await h.helperState( request ) ).payment_methods );
 		await expect( page.locator( '.woocommerce-MyAccount-paymentMethods, .woocommerce-PaymentMethods' ).first() ).toContainText( 'Visa •••• 1111' );
 		await page.waitForTimeout( 1500 );
 	} );
@@ -225,7 +224,8 @@ test.describe( 'saved cards', () => {
 		test.setTimeout( PAY_TIMEOUT );
 		await h.login( page );
 		await h.addToCart( page, ids.product );
-		await h.classicPlaceOrder( page, ids, { email: 'e2e-customer@example.com' } );
+		// The Visa from scenario 26 is preselected (last used card): choose "New card" to enter the Mastercard.
+		await h.classicPlaceOrder( page, ids, { email: 'e2e-customer@example.com', card: 'New card' } );
 		await payAndReturn( page, request, h.CARD_MC );
 		const list = await h.cards( request, ids.customer );
 		expect( list.map( ( c ) => c.last4 ).sort() ).toEqual( [ '1111', '4444' ] );
@@ -312,8 +312,7 @@ test.describe( 'saved cards', () => {
 	test( '31 Unlink answers 404 (card removed in WP) / 500 (card kept, message)', async ( { page, request } ) => {
 		const gone = await h.addCard( request, ids.customer, { hash: '1_00000000000000000000000000000404', last4: '0404', month: '01', year: '2031' } );
 		await h.login( page );
-		const state = await h.helperState( request );
-		await page.goto( state.myaccount.replace( /\/?$/, '/' ) + 'payment-methods/' );
+		await page.goto( ( await h.helperState( request ) ).payment_methods );
 		const row = page.locator( 'tr', { hasText: '•••• 0404' } );
 		await row.locator( 'a.delete' ).click();
 		await page.waitForTimeout( 800 );
@@ -344,8 +343,7 @@ test.describe( 'saved cards', () => {
 		expect( visa ).toBeTruthy();
 		await h.createUser( request, 'e2e-other', 'e2e-other-pass' );
 		await h.login( page, 'e2e-other', 'e2e-other-pass' );
-		const state = await h.helperState( request );
-		await page.goto( state.myaccount.replace( /\/?$/, '/' ) + 'payment-methods/' );
+		await page.goto( ( await h.helperState( request ) ).payment_methods );
 		const res = await page.evaluate( async ( token ) => {
 			const d = new FormData();
 			d.append( 'action', 'paynet_wc_delete_card' );
