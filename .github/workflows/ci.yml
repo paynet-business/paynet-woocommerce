@@ -1,0 +1,126 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: Unit tests (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.3']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer
+          coverage: none
+      - name: Syntax check
+        run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+      - run: composer install --no-interaction --no-progress
+      - name: PHPUnit
+        run: vendor/bin/phpunit --testdox --log-junit junit.xml
+      - name: Report
+        if: always()
+        run: |
+          {
+            echo "## Unit tests — PHP ${{ matrix.php }}"
+            if [ -f junit.xml ]; then
+              php -r '$x=simplexml_load_file("junit.xml"); $s=$x->testsuite; printf("Tests: **%d**, failures: **%d**, errors: **%d**\n\n", $s["tests"], $s["failures"], $s["errors"]);'
+            else
+              echo "No result file."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  plugin-check:
+    name: Plugin Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build distributable copy
+        run: |
+          mkdir -p build/paynet-for-woocommerce
+          rsync -a --exclude-from=.distignore ./ build/paynet-for-woocommerce/
+      - uses: wordpress/plugin-check-action@v1
+        with:
+          build-dir: build/paynet-for-woocommerce
+
+  e2e:
+    name: E2E + stage video
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: e2e
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Start WordPress + WooCommerce
+        run: e2e/node_modules/.bin/wp-env start
+        working-directory: .
+        env:
+          WP_ENV_HOME: ${{ runner.temp }}/wp-env
+      - name: Prepare store (MDL, Moldova)
+        working-directory: .
+        run: |
+          e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_currency MDL
+          e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_default_country MD
+          e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_onboarding_profile '{"skipped":true}' --format=json
+        env:
+          WP_ENV_HOME: ${{ runner.temp }}/wp-env
+      - name: Playwright
+        run: mkdir -p results && npx playwright test
+        continue-on-error: true
+        id: pw
+      - name: Report (Summary)
+        if: always()
+        run: node ../tools/e2e-report.js results/results.json "$GITHUB_STEP_SUMMARY" results/videos.tsv
+      - name: Stage video
+        if: always()
+        run: |
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core > /dev/null
+          bash ../tools/stage-video.sh results/videos.tsv results/stage-video.mp4 "Paynet for WooCommerce — stage 2 — ${GITHUB_SHA::7}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stage-video
+          path: e2e/results/stage-video.mp4
+          retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: failure() || steps.pw.outcome == 'failure'
+        with:
+          name: e2e-details
+          path: e2e/results/artifacts
+          retention-days: 30
+      - name: Playground link
+        if: always()
+        run: |
+          REF="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          URL="https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${REF}/playground/blueprint.json"
+          {
+            echo "## Playground"
+            echo ""
+            echo "Open in the browser (no installation): [WordPress Playground](${URL})"
+            echo ""
+            echo "_Works only if the repository is public. The blueprint installs the plugin from the main branch._"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Fail if scenarios failed
+        if: steps.pw.outcome == 'failure'
+        run: exit 1

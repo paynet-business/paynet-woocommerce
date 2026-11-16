@@ -1,0 +1,8 @@
+{
+    "name": "paynet-woocommerce-e2e",
+    "private": true,
+    "devDependencies": {
+        "@playwright/test": "^1.48.0",
+        "@wordpress/env": "^10.10.0"
+    }
+}

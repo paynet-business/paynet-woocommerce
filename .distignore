@@ -1,0 +1,16 @@
+.git
+.github
+.gitignore
+.distignore
+.wp-env.json
+build
+composer.json
+composer.lock
+e2e
+node_modules
+phpunit.xml.dist
+playground
+tests
+tools
+vendor
+README.md
