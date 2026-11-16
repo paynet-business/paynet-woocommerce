@@ -51,7 +51,8 @@
                     "payment_window": "60",
                     "debug": "yes"
                 },
-                "woocommerce_enable_guest_checkout": "yes"
+                "woocommerce_enable_guest_checkout": "yes",
+                "woocommerce_coming_soon": "no"
             }
         },
         {

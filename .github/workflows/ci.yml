@@ -89,6 +89,7 @@ jobs:
         run: |
           e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_currency MDL
           e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_default_country MD
+          e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_coming_soon no
           e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_onboarding_profile '{"skipped":true}' --format=json
           if [ "$HPOS" = "on" ]; then
             e2e/node_modules/.bin/wp-env run cli wp wc hpos enable

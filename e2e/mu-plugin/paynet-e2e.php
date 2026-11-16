@@ -173,6 +173,7 @@ add_action(
 						'salt'     => (int) get_option( 'paynet_wc_test_salt' ),
 						'hpos'     => class_exists( '\\Automattic\\WooCommerce\\Utilities\\OrderUtil' ) && \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled(),
 						'currency' => get_woocommerce_currency(),
+						'coming_soon' => get_option( 'woocommerce_coming_soon' ),
 						'myaccount' => wc_get_page_permalink( 'myaccount' ),
 						'gateway'   => paynet_e2e_gateway_state(),
 					);
@@ -304,6 +305,7 @@ function paynet_e2e_setup() {
 		)
 	);
 	update_option( 'woocommerce_enable_guest_checkout', 'yes' );
+	update_option( 'woocommerce_coming_soon', 'no' ); // New stores start in "Coming soon" mode: hidden from guests.
 	update_option( 'woocommerce_currency', 'MDL' );
 	update_option( 'woocommerce_default_country', 'MD' );
 	update_option( 'paynet_e2e_ids', $ids, false );
