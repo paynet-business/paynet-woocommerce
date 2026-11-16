@@ -43,7 +43,7 @@ final class Paynet_WC_Blocks extends AbstractPaymentMethodType {
 	 * @return bool
 	 */
 	public function is_active() {
-		return $this->gateway && $this->gateway->is_available();
+		return $this->gateway && $this->gateway->is_ready();
 	}
 
 	/**
@@ -70,7 +70,7 @@ final class Paynet_WC_Blocks extends AbstractPaymentMethodType {
 	public function get_payment_method_data() {
 		return array(
 			'title'       => $this->get_setting( 'title' ),
-			'description' => $this->get_setting( 'description' ),
+			'description' => $this->gateway ? $this->gateway->description : $this->get_setting( 'description' ),
 			'supports'    => $this->gateway ? array_values( $this->gateway->supports ) : array( 'products' ),
 		);
 	}

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // Builds the acceptance report (ТЗ 13.1): a Markdown table for the GitHub Actions Summary
 // and an ordered list of videos with titles for tools/stage-video.sh.
-// Usage: node tools/e2e-report.js <results.json> <summary.md> <videos.tsv>
+// Usage: node tools/e2e-report.js <results.json> <summary.md> <videos.tsv> [heading] [spec file for the video]
 'use strict';
 const fs = require( 'fs' );
 const path = require( 'path' );
 
-const [ resultsFile, summaryFile, videosFile ] = process.argv.slice( 2 );
+const [ resultsFile, summaryFile, videosFile, heading = 'E2E scenarios', videoSpec = '' ] = process.argv.slice( 2 );
 const report = JSON.parse( fs.readFileSync( resultsFile, 'utf8' ) );
 const resultsDir = path.dirname( path.resolve( resultsFile ) );
 
@@ -23,7 +23,8 @@ function walk( suite ) {
 			const err = ok ? '' : String( ( r.error && r.error.message ) || r.status || '' )
 				.replace( /\u001b\[[0-9;]*m/g, '' ).split( '\n' )[ 0 ].replace( /\|/g, '/' ).slice( 0, 200 );
 			rows.push( `| ${ id } | ${ name } | ${ ok ? '✅' : '❌' } | ${ err } |` );
-			( r.attachments || [] ).filter( ( a ) => a.name === 'video' && a.path ).forEach( ( a ) => {
+			const inVideo = ! videoSpec || String( spec.file || '' ).includes( videoSpec );
+			( r.attachments || [] ).filter( ( a ) => inVideo && a.name === 'video' && a.path ).forEach( ( a ) => {
 				const p = path.isAbsolute( a.path ) ? a.path : path.join( resultsDir, a.path );
 				videos.push( [ p, `${ id } — ${ name } — ${ ok ? 'OK' : 'FAIL' }` ].join( '\t' ) );
 			} );
@@ -35,7 +36,7 @@ function walk( suite ) {
 
 const passed = rows.filter( ( r ) => r.includes( '✅' ) ).length;
 const md = [
-	'## E2E scenarios',
+	'## ' + heading,
 	'',
 	`Passed: **${ passed } / ${ rows.length }**`,
 	'',
@@ -43,7 +44,7 @@ const md = [
 	'|---|---|---|---|',
 	...rows,
 	'',
-	'Video of the stage: **Artifacts → stage-video** (one MP4, title card before each scenario).',
+	'Video of the stage: **Artifacts → video-stage-N** (one MP4, title card before each scenario).',
 	'',
 ].join( '\n' );
 

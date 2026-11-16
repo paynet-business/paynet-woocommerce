@@ -40,7 +40,18 @@
                 "woocommerce_default_country": "MD",
                 "woocommerce_onboarding_profile": {
                     "skipped": true
-                }
+                },
+                "woocommerce_paynet_wc_settings": {
+                    "enabled": "yes",
+                    "mode": "test",
+                    "test_username": "771064",
+                    "test_password": "sLgMnGWJ",
+                    "test_sale_area": "onlidocumentation_md",
+                    "test_notify_key": "D9873689-E5F8-4272-A67F-0D8BA3F9BAA7",
+                    "payment_window": "60",
+                    "debug": "yes"
+                },
+                "woocommerce_enable_guest_checkout": "yes"
             }
         },
         {
