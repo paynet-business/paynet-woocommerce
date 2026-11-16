@@ -31,7 +31,7 @@ async function call( method, path, body ) {
 async function create( code, hash ) {
 	seq += 1;
 	const order = runBase + seq;
-	const body = { Order: order, SaleAreaCode: SA, LinkUrlSuccess: 'https://shop.example/success', LinkUrlCancel: 'https://shop.example/cancel', Customer: { Code: code, NameFirst: 'Ion', NameLast: 'Popescu', email: 'ion@example.com' }, Currency: 498, ExpiryDate: chisinau( 60 ), Services: [ { Name: 'Probe', Description: 'R2 ' + seq, Amount: 300, Products: [ { LineNo: 1, Code: 'P', Name: 'P', Description: 'P', UnitPrice: 300, Quantity: 100, Amount: 300, TotalAmount: 300 } ] } ], MoneyType: 'All', Lang: 'EN' };
+	const body = { Order: order, SaleAreaCode: SA, LinkUrlSuccess: 'https://shop.example/success', LinkUrlCancel: 'https://shop.example/cancel', Customer: { Code: code, NameFirst: 'Ion', NameLast: 'Popescu', email: 'ion@example.com', PhoneNumber: '37360000000' }, Currency: 498, ExpiryDate: chisinau( 60 ), Services: [ { Name: 'Probe', Description: 'R2 ' + seq, Amount: 300, Products: [ { LineNo: 1, Code: 'P', Name: 'P', Description: 'P', UnitPrice: 300, Quantity: 100, Amount: 300, TotalAmount: 300 } ] } ], MoneyType: 'All', Lang: 'EN' };
 	if ( hash ) {
 		body.CardLinkHash = hash;
 	}
@@ -43,11 +43,8 @@ async function cardHtml( page, label ) {
 	await page.waitForTimeout( 3500 );
 	const html = await page.evaluate( () => {
 		const n = document.querySelector( '#new-card' );
-		let box = n;
-		for ( let i = 0; i < 4 && box && box.parentElement; i++ ) {
-			box = box.parentElement;
-		}
-		const src = ( box || document.body ).outerHTML.replace( /<script[\s\S]*?<\/script>/g, '' ).replace( /<svg[\s\S]*?<\/svg>/g, '<svg/>' ).replace( /\s+/g, ' ' );
+		const box = document.querySelector( '.card-content' ) || document.body;
+		const src = box.outerHTML.replace( /<script[\s\S]*?<\/script>/g, '' ).replace( /<style[\s\S]*?<\/style>/g, '' ).replace( /<svg[\s\S]*?<\/svg>/g, '<svg/>' ).replace( /url\([^)]*\)/g, 'url()' ).replace( /\s+/g, ' ' );
 		return { visibleNewCard: !! n && ! n.classList.contains( 'display-none' ), html: src.slice( 0, 3500 ) };
 	} );
 	log( 'html ' + label, html );
@@ -110,6 +107,12 @@ test( 'round 2', async ( { page } ) => {
 	const c = await create( code, h1 );
 	await page.goto( c.link );
 	await cardHtml( page, 'with h1 (two cards linked)' );
+
+	// Unlink h1, then open a page with h1 again.
+	log( 'unlink h1', await call( 'POST', '/api/linked-cards/unlink', { CardLinkHash: h1, SaleAreaCode: SA, CustomerCode: code } ) );
+	const c2 = await create( code, h1 );
+	await page.goto( c2.link );
+	await cardHtml( page, 'with h1 after unlink' );
 
 	// Unlink h2, then open a page with h2.
 	log( 'unlink h2', await call( 'POST', '/api/linked-cards/unlink', { CardLinkHash: h2, SaleAreaCode: SA, CustomerCode: code } ) );
