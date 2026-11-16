@@ -71,15 +71,16 @@ class Paynet_WC_Cards {
 	}
 
 	/**
-	 * At checkout, Paynet cards are shown only in the plugin's own list under the payment method (ТЗ разд. 9б).
-	 * The Checkout block would otherwise list them on top as separate options. "My account" keeps them.
+	 * Outside "My account", Paynet cards are shown only in the plugin's own list under the payment method
+	 * (ТЗ разд. 9б). The Checkout block would otherwise list them on top as separate options.
 	 *
 	 * @param array $list    Saved methods by type.
 	 * @param int   $user_id User ID.
 	 * @return array
 	 */
 	public static function hide_from_checkout_list( $list, $user_id ) {
-		if ( ! is_array( $list ) || ! function_exists( 'is_checkout' ) || ! is_checkout() || is_account_page() ) {
+		// Only "My account → Payment methods" lists them; the checkout (classic or block, whichever page) does not.
+		if ( ! is_array( $list ) || ! function_exists( 'is_account_page' ) || is_account_page() || is_admin() ) {
 			return $list;
 		}
 		foreach ( $list as $type => $items ) {
