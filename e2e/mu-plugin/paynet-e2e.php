@@ -174,6 +174,7 @@ add_action(
 						'hpos'     => class_exists( '\\Automattic\\WooCommerce\\Utilities\\OrderUtil' ) && \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled(),
 						'currency' => get_woocommerce_currency(),
 						'myaccount' => wc_get_page_permalink( 'myaccount' ),
+						'gateway'   => paynet_e2e_gateway_state(),
 					);
 				},
 			)
@@ -375,4 +376,27 @@ function paynet_e2e_run_checks( $req ) {
 		}
 	}
 	return array( 'ran' => $ran ) + paynet_e2e_order( $req );
+}
+
+/**
+ * Gateway readiness (diagnostics).
+ *
+ * @return array
+ */
+function paynet_e2e_gateway_state() {
+	$gateways = WC()->payment_gateways() ? WC()->payment_gateways()->payment_gateways() : array();
+	$g        = isset( $gateways['paynet_wc'] ) ? $gateways['paynet_wc'] : null;
+	$settings = (array) get_option( 'woocommerce_paynet_wc_settings', array() );
+	foreach ( array( 'test_password', 'live_password', 'test_notify_key', 'live_notify_key' ) as $secret ) {
+		if ( isset( $settings[ $secret ] ) ) {
+			$settings[ $secret ] = '' === $settings[ $secret ] ? '' : '***';
+		}
+	}
+	return array(
+		'loaded'     => (bool) $g,
+		'ready'      => $g ? $g->is_ready() : null,
+		'configured' => $g ? $g->is_configured() : null,
+		'settings'   => $settings,
+		'checkout'   => (int) get_option( 'woocommerce_checkout_page_id' ),
+	);
 }

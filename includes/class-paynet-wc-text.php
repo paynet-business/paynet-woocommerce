@@ -23,9 +23,13 @@ final class Paynet_WC_Text {
 	public static function clean( $value, $max_length = 0 ) {
 		$s = is_scalar( $value ) ? (string) $value : '';
 
-		// Same as wp_strip_all_tags(): drop script/style with content, then tags.
-		$s = (string) preg_replace( '@<(script|style)[^>]*?>.*?</\\1>@si', '', $s );
-		$s = strip_tags( $s );
+		if ( function_exists( 'wp_strip_all_tags' ) ) {
+			$s = wp_strip_all_tags( $s );
+		} else {
+			// Unit tests without WordPress: same idea as wp_strip_all_tags().
+			$s = (string) preg_replace( '@<(script|style)[^>]*?>.*?</\\1>@si', '', $s );
+			$s = (string) preg_replace( '@<[^>]*>@', '', $s );
+		}
 		$s = html_entity_decode( $s, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 		$s = stripslashes( $s );
 

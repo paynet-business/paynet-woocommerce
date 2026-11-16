@@ -2,6 +2,7 @@ const { chromium } = require( '@playwright/test' );
 
 // Logs in as the wp-env admin once and stores the session for all tests.
 module.exports = async () => {
+	require( 'fs' ).rmSync( 'results/shared.json', { force: true } );
 	const baseURL = process.env.WP_BASE_URL || 'http://localhost:8888';
 	const browser = await chromium.launch();
 	const page = await browser.newPage();

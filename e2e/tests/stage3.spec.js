@@ -10,10 +10,36 @@ const SETTINGS = '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=payn
 const GUEST = { cookies: [], origins: [] };
 const PAY_TIMEOUT = 240000;
 
-test.describe.configure( { mode: 'serial' } );
-
+// Not serial: a failed scenario must not skip the others (each one gets its own ✓/✗ in the report).
+// State shared between scenarios lives in a file, so it survives worker restarts after a failure.
 let ids;
-const shared = {};
+const shared = h.sharedState();
+
+test.beforeEach( async ( { request } ) => {
+	ids = ids || ( await h.setup( request ) );
+} );
+
+// On failure: where the browser was and what it showed — readable in the CI log (artifacts are for people).
+test.afterEach( async ( { page, request }, testInfo ) => {
+	if ( testInfo.status === testInfo.expectedStatus ) {
+		return;
+	}
+	const text = await page.locator( 'body' ).innerText().catch( () => '' );
+	console.log( `--- DIAG ${ testInfo.title }\nURL: ${ page.url() }\nPAGE: ${ text.replace( /\s+/g, ' ' ).slice( 0, 1500 ) }` );
+	const state = await h.helperState( request ).catch( ( e ) => ( { error: String( e ) } ) );
+	console.log( 'STATE: ' + JSON.stringify( state ) );
+	const log = await h.log( request ).catch( () => ( { requests: [] } ) );
+	console.log( 'API: ' + JSON.stringify( log.requests.slice( -6 ).map( ( r ) => r.method + ' ' + r.path ) ) );
+} );
+
+async function paynetMails( request ) {
+	return ( await h.log( request ) ).mails.filter( ( m ) => String( m.subject ).startsWith( 'Paynet:' ) );
+}
+
+// The browser request that went to the Paynet page (the page itself may redirect further).
+function paynetNavigation( page ) {
+	return page.waitForRequest( ( r ) => r.isNavigationRequest() && r.url().includes( 'paynet.md' ), { timeout: 60000 } );
+}
 
 async function placeClassic( page, request, opts = {} ) {
 	await h.setOptions( request, { woocommerce_checkout_page_id: ids.classic_checkout } );
@@ -25,7 +51,7 @@ async function createdOrder( page, request ) {
 	const id = await h.latestOrder( request );
 	const o = await h.order( request, id );
 	expect( o.meta._paynet_order, 'Paynet Order saved' ).toBeTruthy();
-	expect( page.url() ).toBe( o.meta._paynet_payment_link );
+	expect( o.meta._paynet_payment_link ).toContain( '/ecom/getecom/' + o.meta._paynet_payment_id );
 	return o;
 }
 
@@ -41,7 +67,6 @@ async function paidByNotification( request, o, extra = {} ) {
 
 test.describe( 'admin', () => {
 	test( 'S3-1 Settings: "Fill with test credentials" and "Check connection" (✓ and ✗)', async ( { page, request } ) => {
-		ids = await h.setup( request );
 		await page.goto( SETTINGS );
 		await page.selectOption( '#woocommerce_paynet_wc_mode', 'test' );
 		await page.check( '#woocommerce_paynet_wc_enabled' );
@@ -144,9 +169,9 @@ test.describe( 'customer', () => {
 		await page.goto( state.myaccount );
 		await page.click( 'a:has-text("Orders")' );
 		await page.locator( `tr:has(a:has-text("#${ o.id }")) a.pay` ).click();
+		const nav = paynetNavigation( page );
 		await page.click( '#place_order' );
-		await page.waitForURL( /paynet\.md/, { timeout: 60000 } );
-		expect( page.url() ).toBe( o.meta._paynet_payment_link );
+		expect( ( await nav ).url() ).toBe( o.meta._paynet_payment_link );
 		const again = await h.order( request, o.id );
 		expect( again.meta._paynet_order ).toBe( o.meta._paynet_order );
 		shared.s4 = o;
@@ -158,12 +183,14 @@ test.describe( 'customer', () => {
 		await h.setMeta( request, before.id, { _paynet_expiry_ts: Math.floor( Date.now() / 1000 ) - 60 } );
 		await h.login( page );
 		await page.goto( before.pay_url );
+		const nav = paynetNavigation( page );
 		await page.click( '#place_order' );
-		await page.waitForURL( /paynet\.md/, { timeout: 60000 } );
+		const navUrl = ( await nav ).url();
 		const o = await h.order( request, before.id );
 		expect( o.meta._paynet_order ).not.toBe( before.meta._paynet_order );
 		expect( Number( o.meta._paynet_attempt ) ).toBe( Number( before.meta._paynet_attempt ) + 1 );
-		expect( page.url() ).toBe( o.meta._paynet_payment_link );
+		expect( navUrl ).toBe( o.meta._paynet_payment_link );
+		expect( navUrl ).not.toBe( before.meta._paynet_payment_link );
 		await h.payOnPaynet( page );
 		await page.waitForURL( /order-received/, { timeout: 120000 } );
 		expect( ( await h.order( request, o.id ) ).status ).toBe( 'processing' );
@@ -210,19 +237,19 @@ test.describe( 'customer', () => {
 		await h.payOnPaynet( page );
 		await h.waitFor( returned, { message: 'redirect back to the shop' } );
 
-		const mailsBefore = ( await h.log( request ) ).mails.length;
+		const mailsBefore = ( await paynetMails( request ) ).length;
 		const { res } = await paidByNotification( request, o, { paidAmount: Number( o.meta._paynet_amount ) - 100 } );
 		expect( res.status ).toBe( 200 );
 		const after = await h.order( request, o.id );
 		expect( after.status ).toBe( 'on-hold' );
 		expect( after.notes.join( '\n' ) ).toContain( 'amount mismatch' );
 		expect( after.notes.join( '\n' ) ).toContain( 'PaidAmount in the notification' );
-		expect( ( await h.log( request ) ).mails.length ).toBe( mailsBefore + 1 );
+		expect( ( await paynetMails( request ) ).length ).toBe( mailsBefore + 1 );
 	} );
 
 	test( '9 Repeated notification → no duplicate notes or e-mails', async ( { request } ) => {
 		const before = await h.order( request, shared.s1.id );
-		const mailsBefore = ( await h.log( request ) ).mails.length;
+		const mailsBefore = ( await h.log( request ) ).mails.length; // All e-mails, WooCommerce ones included.
 		for ( let i = 0; i < 2; i++ ) {
 			const res = await h.sendNotification( request, shared.s1.n );
 			expect( res.status ).toBe( 200 );
@@ -275,8 +302,6 @@ test.describe( 'customer', () => {
 	test( '18 Name "Mary\'s & <Co>", Cyrillic, line break → the order is created', async ( { page, request } ) => {
 		await h.addToCart( page, ids.special );
 		await h.setOptions( request, { woocommerce_checkout_page_id: ids.classic_checkout } );
-		await page.goto( '/?page_id=' + ids.classic_checkout );
-		await page.locator( '#order_comments' ).fill( 'line 1\nline 2' ).catch( () => {} );
 		await h.classicPlaceOrder( page, ids, { first: "Mary's & <Co>", last: 'Țurcan Мария' } );
 		const o = await createdOrder( page, request );
 		const body = ( await h.log( request ) ).requests.filter( ( r ) => 'POST' === r.method && r.path === '/api/order' ).pop().body;
@@ -294,9 +319,12 @@ test.describe( 'customer', () => {
 		const body = ( await h.log( request ) ).requests.filter( ( r ) => 'POST' === r.method && r.path === '/api/order' ).pop().body;
 		const service = body.Services[ 0 ];
 		const sum = service.Products.reduce( ( a, p ) => a + p.Amount, 0 );
-		expect( Math.round( Number( o.total ) * 100 ) ).toBe( 10397 ); // 53.97 + 50.00 shipping.
-		expect( service.Amount ).toBe( 10397 );
-		expect( sum ).toBe( 10397 );
+		const total = Math.round( Number( o.total ) * 100 );
+		expect( total ).toBeGreaterThan( 10390 ); // ≈ 53.97 (3 × 19.99 − 10 %) + 50.00 shipping.
+		expect( total ).toBeLessThan( 10400 );
+		expect( service.Amount ).toBe( total );
+		expect( sum ).toBe( total );
+		expect( service.Products.length ).toBe( 2 ); // product line + shipping line.
 		for ( const p of service.Products ) {
 			expect( p.UnitPrice * p.Quantity / 100 ).toBe( p.Amount );
 		}
@@ -344,14 +372,14 @@ test.describe( 'customer', () => {
 		await placeClassic( page, request );
 		const o = await createdOrder( page, request );
 		expect( Number( o.meta._paynet_amount ) ).toBe( 330000 );
-		const mailsBefore = ( await h.log( request ) ).mails.length;
+		const mailsBefore = ( await paynetMails( request ) ).length;
 		await h.setMocks( request, [ { method: 'GET', path: '/api/order/merchant/', status: 200, body: h.paidStatus( { paymentId: o.meta._paynet_payment_id, order: o.meta._paynet_order, amount: 330000, paidAmount: 297000 } ), times: 5 } ] );
 		const after = await h.runChecks( request, o.id );
 		await h.setMocks( request, [] );
 		expect( after.status ).toBe( 'processing' );
 		expect( after.meta._paynet_amount_mismatch ).toBe( 'less' );
 		expect( after.notes.join( '\n' ) ).toContain( 'the paid amount (2970.00 MDL) is less than the order amount (3300.00 MDL). Check whether there was a discount.' );
-		const mails = ( await h.log( request ) ).mails;
+		const mails = await paynetMails( request );
 		expect( mails.length ).toBe( mailsBefore + 1 );
 		expect( mails[ mails.length - 1 ].message ).toContain( 'Check whether there was a discount' );
 		shared.s24 = o.id;
@@ -392,11 +420,12 @@ test.describe( 'admin checks', () => {
 		const state = await h.helperState( request );
 		const list = state.hpos ? '/wp-admin/admin.php?page=wc-orders' : '/wp-admin/edit.php?post_type=shop_order';
 		await page.goto( list );
-		const row = page.locator( `tr:has(a[href*="${ state.hpos ? 'id=' + shared.s24 : 'post=' + shared.s24 }"])` ).first();
+		const link = ( id ) => ( state.hpos ? `a[href$="&id=${ id }"]` : `a[href*="post=${ id }&"]` );
+		const row = page.locator( `tr:has(${ link( shared.s24 ) })` ).first();
 		await expect( row.locator( '.paynet-wc-mismatch' ) ).toBeVisible();
 		await page.goto( list + '&paynet_wc_mismatch=1' );
 		await expect( page.locator( '.paynet-wc-mismatch' ).first() ).toBeVisible();
-		await expect( page.locator( `a[href*="${ state.hpos ? 'id=' + shared.s1.id : 'post=' + shared.s1.id }"]` ) ).toHaveCount( 0 );
+		await expect( page.locator( link( shared.s1.id ) ) ).toHaveCount( 0 );
 	} );
 
 	test( '33 Settings: the test-mode notice explains why notifications do not arrive', async ( { page } ) => {

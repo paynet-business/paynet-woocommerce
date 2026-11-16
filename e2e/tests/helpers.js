@@ -247,7 +247,30 @@ function paidStatus( { paymentId, order, amount, paidAmount, status = 4 } ) {
 	};
 }
 
+// Values passed between scenarios (order IDs), persisted in results/shared.json.
+function sharedState() {
+	const fs = require( 'fs' );
+	const file = require( 'path' ).join( __dirname, '..', 'results', 'shared.json' );
+	const read = () => {
+		try {
+			return JSON.parse( fs.readFileSync( file, 'utf8' ) );
+		} catch ( e ) {
+			return {};
+		}
+	};
+	return new Proxy( {}, {
+		get: ( t, k ) => read()[ k ],
+		set: ( t, k, v ) => {
+			const d = read();
+			d[ k ] = v;
+			fs.writeFileSync( file, JSON.stringify( d ) );
+			return true;
+		},
+	} );
+}
+
 module.exports = {
+	sharedState,
 	API, TEST_CREDS, NOTIFY_KEY, setup, helperState, occupyOrder, order, latestOrder, runChecks, setMocks, setOptions, setMeta, log, createOrder,
 	notification, sendNotification, payOnPaynet, blockReturn, waitFor, classicPlaceOrder, blocksPlaceOrder, addToCart, login, paidStatus, waitUnblocked,
 };
