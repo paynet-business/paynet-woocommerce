@@ -24,12 +24,17 @@ test.afterEach( async ( { page, request }, testInfo ) => {
 	if ( testInfo.status === testInfo.expectedStatus ) {
 		return;
 	}
-	const text = await page.locator( 'body' ).innerText().catch( () => '' );
-	console.log( `--- DIAG ${ testInfo.title }\nURL: ${ page.url() }\nPAGE: ${ text.replace( /\s+/g, ' ' ).slice( 0, 1500 ) }` );
+	const text = ( await page.locator( 'main, #wpbody-content, body' ).first().innerText().catch( () => '' ) ).replace( /\s+/g, ' ' ).replace( /Afghanistan.*?Zimbabwe/g, '[countries]' );
+	console.log( `--- DIAG ${ testInfo.title }\nURL: ${ page.url() }\nPAGE: ${ text.slice( 0, 1500 ) }` );
 	const state = await h.helperState( request ).catch( ( e ) => ( { error: String( e ) } ) );
 	console.log( 'STATE: ' + JSON.stringify( state ) );
 	const log = await h.log( request ).catch( () => ( { requests: [] } ) );
-	console.log( 'API: ' + JSON.stringify( log.requests.slice( -6 ).map( ( r ) => r.method + ' ' + r.path ) ) );
+	console.log( 'API: ' + JSON.stringify( log.requests.slice( -6 ).map( ( r ) => r.method + ' ' + r.path + ' → ' + ( r.response || 'mock/none' ) ) ) );
+	const last = await h.latestOrder( request ).catch( () => 0 );
+	if ( last ) {
+		const o = await h.order( request, last ).catch( () => null );
+		console.log( 'LATEST ORDER: ' + JSON.stringify( o && { id: o.id, status: o.status, notes: o.notes, meta: o.meta } ) );
+	}
 } );
 
 async function paynetMails( request ) {

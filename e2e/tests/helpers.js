@@ -175,6 +175,13 @@ async function classicPlaceOrder( page, ids, opts = {} ) {
 		await waitUnblocked( page );
 		await expect( page.locator( '.cart-discount' ) ).toBeVisible();
 	}
+	await page.evaluate( () => {
+		const el = document.querySelector( '#billing_country' );
+		if ( el && ! el.value && window.jQuery ) {
+			window.jQuery( el ).val( 'MD' ).trigger( 'change' );
+		}
+	} );
+	await waitUnblocked( page );
 	await fillIfVisible( page, '#billing_first_name', first );
 	await fillIfVisible( page, '#billing_last_name', last );
 	await fillIfVisible( page, '#billing_address_1', 'Str. Test 1' );
@@ -198,6 +205,10 @@ async function blocksPlaceOrder( page, ids, { email = 'e2e-blocks@example.com' }
 	await page.waitForSelector( '.wc-block-checkout', { timeout: 30000 } );
 	await fillIfVisible( page, '#email', email );
 	for ( const prefix of [ 'shipping', 'billing' ] ) {
+		const country = page.locator( `select#${ prefix }-country` );
+		if ( ( await country.count() ) && ( await country.isVisible() ) && ! ( await country.inputValue() ) ) {
+			await country.selectOption( 'MD' );
+		}
 		await fillIfVisible( page, `#${ prefix }-first_name`, 'Ion' );
 		await fillIfVisible( page, `#${ prefix }-last_name`, 'Popescu' );
 		await fillIfVisible( page, `#${ prefix }-address_1`, 'Str. Test 1' );

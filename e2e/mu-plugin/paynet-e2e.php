@@ -72,6 +72,25 @@ add_filter(
 	3
 );
 
+// Response codes of real (not mocked) API calls, for the failure diagnostics.
+add_action(
+	'http_api_debug',
+	static function ( $response, $context, $class, $args, $url ) {
+		if ( false === strpos( $url, 'paynet.md' ) ) {
+			return;
+		}
+		$log = get_option( PAYNET_E2E_LOG, array() );
+		if ( $log ) {
+			$code = is_wp_error( $response ) ? 'WP_Error' : wp_remote_retrieve_response_code( $response );
+			$body = is_wp_error( $response ) ? $response->get_error_message() : substr( (string) wp_remote_retrieve_body( $response ), 0, 300 );
+			$log[ count( $log ) - 1 ]['response'] = $code . ' ' . $body;
+			update_option( PAYNET_E2E_LOG, $log, false );
+		}
+	},
+	10,
+	5
+);
+
 add_filter(
 	'pre_wp_mail',
 	static function ( $short, $atts ) {
@@ -305,7 +324,8 @@ function paynet_e2e_setup() {
 		)
 	);
 	update_option( 'woocommerce_enable_guest_checkout', 'yes' );
-	update_option( 'woocommerce_coming_soon', 'no' ); // New stores start in "Coming soon" mode: hidden from guests.
+	update_option( 'woocommerce_coming_soon', 'no' );
+	update_option( 'woocommerce_default_customer_address', 'base' ); // Guests get the store country (MD). // New stores start in "Coming soon" mode: hidden from guests.
 	update_option( 'woocommerce_currency', 'MDL' );
 	update_option( 'woocommerce_default_country', 'MD' );
 	update_option( 'paynet_e2e_ids', $ids, false );
