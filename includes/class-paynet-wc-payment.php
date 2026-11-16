@@ -311,6 +311,13 @@ class Paynet_WC_Payment {
 				'single_line' => $label,
 				'total'       => $order->get_total(),
 				'lines'       => $lines,
+				/**
+				 * Send each order line as a separate Paynet product (off: the API currently accepts one product per service).
+				 *
+				 * @param bool     $multiline Per-line sending.
+				 * @param WC_Order $order     Order.
+				 */
+				'multiline'   => (bool) apply_filters( 'paynet_wc_multiline_products', false, $order ),
 			)
 		);
 	}

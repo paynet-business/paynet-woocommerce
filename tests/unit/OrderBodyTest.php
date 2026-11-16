@@ -36,6 +36,7 @@ final class OrderBodyTest extends TestCase {
 				'lines'       => array(
 					array( 'code' => 'SKU-1', 'name' => 'Product', 'qty' => 3, 'total' => '30.00' ),
 				),
+				'multiline'   => true,
 			),
 			$over
 		);
@@ -102,6 +103,39 @@ final class OrderBodyTest extends TestCase {
 		$this->assertSame( 100, $p['Quantity'] );
 		$this->assertSame( 1000, $p['UnitPrice'] );
 		$this->assertSame( $p['Amount'], intdiv( $p['UnitPrice'] * $p['Quantity'], 100 ) );
+	}
+
+	public function test_default_is_one_line_named_after_items() {
+		// The test API rejects a Service with 2+ Products (HTTP 500, probes 16.11.2026).
+		$b = Paynet_WC_Order_Body::build(
+			$this->data(
+				array(
+					'multiline' => false,
+					'total'     => '103.97',
+					'lines'     => array(
+						array( 'code' => 'A', 'name' => 'Cake &amp; Co', 'qty' => 3, 'total' => '53.97' ),
+						array( 'code' => 'shipping', 'name' => 'Courier', 'qty' => 1, 'total' => '50.00' ),
+					),
+				)
+			)
+		);
+		$p = $b['Services'][0]['Products'];
+		$this->assertCount( 1, $p );
+		$this->assertSame( array( 'LineNo' => 1, 'Code' => 'order-482913000000123001', 'Name' => 'Cake & Co × 3, Courier', 'UnitPrice' => 10397, 'Quantity' => 100, 'Amount' => 10397, 'TotalAmount' => 10397 ), $p[0] );
+		$this->assertSame( 10397, $b['Services'][0]['Amount'] );
+	}
+
+	public function test_default_one_line_long_names_cut_and_empty_fallback() {
+		$lines = array();
+		for ( $i = 0; $i < 40; $i++ ) {
+			$lines[] = array( 'name' => 'Product number ' . $i, 'qty' => 1, 'total' => '1.00' );
+		}
+		$b = Paynet_WC_Order_Body::build( $this->data( array( 'multiline' => false, 'total' => '40.00', 'lines' => $lines ) ) );
+		$name = $b['Services'][0]['Products'][0]['Name'];
+		$this->assertSame( Paynet_WC_Order_Body::MAX_PRODUCT_NAME, mb_strlen( $name ) );
+		$this->assertSame( '…', mb_substr( $name, -1 ) );
+		$b = Paynet_WC_Order_Body::build( $this->data( array( 'multiline' => false, 'lines' => array() ) ) );
+		$this->assertSame( 'Order #123', $b['Services'][0]['Products'][0]['Name'] );
 	}
 
 	public function test_every_line_has_code() {

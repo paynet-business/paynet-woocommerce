@@ -123,6 +123,7 @@ final class Paynet_WC_Order_Body {
 	 *     @type string $single_line     Name of the one-line fallback ("Order #123").
 	 *     @type mixed  $total           Order total (decimal).
 	 *     @type array  $lines           Each: code, name, qty (decimal), total (decimal, incl. tax).
+	 *     @type bool   $multiline       Send one product line per order line (default false, see products()).
 	 *     @type string $card_link_hash  Optional saved card token.
 	 * }
 	 * @return array
@@ -168,7 +169,9 @@ final class Paynet_WC_Order_Body {
 				'Name'        => Paynet_WC_Text::clean( $d['shop_name'], self::MAX_SERVICE_NAME ),
 				'Description' => Paynet_WC_Text::clean( $d['description'], self::MAX_SERVICE_DESCRIPTION ),
 				'Amount'      => $total,
-				'Products'    => self::products( isset( $d['lines'] ) ? (array) $d['lines'] : array(), $total, (string) $d['single_line'] ),
+				'Products'    => ! empty( $d['multiline'] )
+					? self::products( isset( $d['lines'] ) ? (array) $d['lines'] : array(), $total, (string) $d['single_line'] )
+					: self::single_product( isset( $d['lines'] ) ? (array) $d['lines'] : array(), $total, (string) $d['single_line'], (int) $d['order'] ),
 			),
 		);
 		if ( '' === $body['Services'][0]['Name'] ) {
@@ -184,6 +187,51 @@ final class Paynet_WC_Order_Body {
 			$body['CardLinkHash'] = (string) $d['card_link_hash'];
 		}
 		return $body;
+	}
+
+	/**
+	 * One product line for the whole order, named after its items ("Cake × 2, Tea, Courier").
+	 *
+	 * The test API answers HTTP 500 for a Service with two or more Products (probes 16.11.2026, also with all
+	 * fields filled and sums matching), so the plugin sends one line by default. Per-line sending is kept in
+	 * products() and is switched on with the `paynet_wc_multiline_products` filter.
+	 *
+	 * @param array  $lines       Lines.
+	 * @param int    $total       Total in minor units.
+	 * @param string $single_name Fallback name ("Order #123").
+	 * @param int    $order       Paynet Order (for Code).
+	 * @return array
+	 */
+	public static function single_product( array $lines, $total, $single_name, $order ) {
+		$parts = array();
+		foreach ( $lines as $line ) {
+			$name = Paynet_WC_Text::clean( isset( $line['name'] ) ? $line['name'] : '' );
+			if ( '' === $name ) {
+				continue;
+			}
+			$qty = isset( $line['qty'] ) ? (float) $line['qty'] : 1.0;
+			if ( abs( $qty - 1.0 ) > 0.0001 && $qty > 0 ) {
+				$name .= ' × ' . rtrim( rtrim( number_format( $qty, 2, '.', '' ), '0' ), '.' );
+			}
+			$parts[] = $name;
+		}
+		$name = Paynet_WC_Text::clean( implode( ', ', $parts ), self::MAX_PRODUCT_NAME );
+		if ( '' === $name ) {
+			$name = Paynet_WC_Text::clean( $single_name, self::MAX_PRODUCT_NAME );
+		} elseif ( Paynet_WC_Text::length( implode( ', ', $parts ) ) > self::MAX_PRODUCT_NAME ) {
+			$name = rtrim( Paynet_WC_Text::clean( $name, self::MAX_PRODUCT_NAME - 1 ) ) . '…';
+		}
+		return array(
+			array(
+				'LineNo'      => 1,
+				'Code'        => 'order-' . $order,
+				'Name'        => $name,
+				'UnitPrice'   => (int) $total,
+				'Quantity'    => 100,
+				'Amount'      => (int) $total,
+				'TotalAmount' => (int) $total,
+			),
+		);
 	}
 
 	/**

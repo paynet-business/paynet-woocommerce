@@ -313,7 +313,7 @@ test.describe( 'customer', () => {
 		const body = ( await h.log( request ) ).requests.filter( ( r ) => 'POST' === r.method && r.path === '/api/order' ).pop().body;
 		expect( body.Customer.NameFirst ).toBe( "Mary's &" );
 		expect( body.Customer.NameLast ).toBe( 'Țurcan Мария' );
-		expect( body.Services[ 0 ].Products[ 0 ].Name ).toBe( 'Mary\'s & Торт "Наполеон" Țară' );
+		expect( body.Services[ 0 ].Products[ 0 ].Name ).toBe( 'Mary\'s & Торт "Наполеон" Țară, Courier' );
 		expect( JSON.stringify( body ) ).not.toMatch( /[<>]|&#0?39;|\\n/ );
 		expect( o.status ).toBe( 'pending' );
 	} );
@@ -330,7 +330,9 @@ test.describe( 'customer', () => {
 		expect( total ).toBeLessThan( 10400 );
 		expect( service.Amount ).toBe( total );
 		expect( sum ).toBe( total );
-		expect( service.Products.length ).toBe( 2 ); // product line + shipping line.
+		// One line for the whole order: the API rejects a service with 2+ products (probes 16.11.2026).
+		expect( service.Products.length ).toBe( 1 );
+		expect( service.Products[ 0 ].Name ).toBe( 'E2E product × 3, Courier' );
 		for ( const p of service.Products ) {
 			expect( p.UnitPrice * p.Quantity / 100 ).toBe( p.Amount );
 		}
