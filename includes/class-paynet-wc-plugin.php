@@ -92,7 +92,12 @@ final class Paynet_WC_Plugin {
 		add_action( 'wp_ajax_paynet_wc_check_connection', array( 'Paynet_WC_Gateway', 'ajax_check_connection' ) );
 		add_action( 'woocommerce_thankyou_' . Paynet_WC_Gateway::ID, array( 'Paynet_WC_Gateway', 'thankyou_text' ) );
 		Paynet_WC_Admin::init();
-		add_action( 'woocommerce_blocks_loaded', array( $this, 'register_blocks' ) );
+		// WooCommerce fires woocommerce_blocks_loaded on plugins_loaded before this init (priority 11) runs.
+		if ( did_action( 'woocommerce_blocks_loaded' ) ) {
+			$this->register_blocks();
+		} else {
+			add_action( 'woocommerce_blocks_loaded', array( $this, 'register_blocks' ) );
+		}
 		add_action( 'admin_notices', array( $this, 'notice_old_plugin' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( PAYNET_WC_FILE ), array( $this, 'action_links' ) );
 	}

@@ -238,6 +238,31 @@ async function main() {
 		} );
 		await rule( 'Order ~6.9e17 (test salt formula), single line', ( b ) => ( b.Order = 0 ), { bigOrder: true } );
 	}
+	if ( want( 'round4' ) ) {
+		const full = ( no, amount, extra = {} ) => Object.assign( { LineNo: no, Code: 'SKU-' + no, Name: 'Product ' + no, Description: 'Product ' + no, UnitPrice: amount, Quantity: 100, Amount: amount, TotalAmount: amount }, extra );
+		const set = ( lines, total ) => ( b ) => {
+			b.Services[ 0 ].Products = lines;
+			b.Services[ 0 ].Amount = total;
+		};
+		await rule( '2 full lines 150 + 150', set( [ full( 1, 150 ), full( 2, 150 ) ], 300 ) );
+		await rule( '2 full lines 200 + 100', set( [ full( 1, 200 ), full( 2, 100 ) ], 300 ) );
+		await rule( '2 full lines 250 + 50', set( [ full( 1, 250 ), full( 2, 50 ) ], 300 ) );
+		await rule( '2 full lines 1000 + 1000', set( [ full( 1, 1000 ), full( 2, 1000 ) ], 2000 ) );
+		await rule( '2 lines, same Code', set( [ full( 1, 150 ), full( 2, 150, { Code: 'SKU-1' } ) ], 300 ) );
+		await rule( '2 lines, LineNo 0 and 1', set( [ full( 0, 150 ), full( 1, 150 ) ], 300 ) );
+		await rule( '2 lines, Quantity 200 each (2 pcs × 75)', set( [ full( 1, 150, { UnitPrice: 75, Quantity: 200 } ), full( 2, 150, { UnitPrice: 75, Quantity: 200 } ) ], 300 ) );
+		await rule( '3 full lines 100 each', set( [ full( 1, 100 ), full( 2, 100 ), full( 3, 100 ) ], 300 ) );
+		await rule( '2 Services with 1 product each', ( b ) => {
+			b.Services = [
+				{ Name: 'S1', Description: 'S1', Amount: 150, Products: [ full( 1, 150 ) ] },
+				{ Name: 'S2', Description: 'S2', Amount: 150, Products: [ full( 1, 150 ) ] },
+			];
+		} );
+		await rule( '2 Services without products', ( b ) => {
+			b.Services = [ { Name: 'S1', Description: 'S1', Amount: 150 }, { Name: 'S2', Description: 'S2', Amount: 150 } ];
+		} );
+		await rule( '1 line 1000 (control)', set( [ full( 1, 1000 ) ], 1000 ) );
+	}
 	if ( ! want( 'rules' ) && ! want( 'lengths' ) ) {
 		return finish();
 	}

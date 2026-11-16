@@ -29,7 +29,7 @@ jobs:
           node-version: '22'
       - run: node tools/probe-api.js probe-results.json
         env:
-          PROBE_ONLY: ${{ inputs.only || 'round3' }}
+          PROBE_ONLY: ${{ inputs.only || 'round4' }}
           PROBE_FIELDS: ${{ inputs.fields || 'Services.Name,Services.Description' }}
       - uses: actions/upload-artifact@v4
         if: always()
