@@ -1,0 +1,107 @@
+﻿# This file is distributed under the same license as the WordPress - 4.7.x - Administration - Network Admin package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2017-12-22 16:20+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 2.0.5\n"
+"Language: ro\n"
+"Project-Id-Version: WordPress - 4.7.x - Administration - Network Admin\n"
+"POT-Creation-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+
+msgid "Вы используете тестовый режим для обращения к платежному шлюзу !!!"
+msgstr "Utilizarea accesului la gateway-ul de plată este in mod de testare !!!"
+
+msgid "Режим работы"
+msgstr "Modul de testare"
+
+msgid "Установите для приема реальных платежей"
+msgstr "Setați pentru a primi plăți reale."
+
+msgid "Имя платежной системы"
+msgstr "Denumirea sistemului de plăți"
+
+msgid "Данное название отображается в списке доступных платежных систем"
+msgstr "Acestă denumire este afișată în lista sistemelor de plăți disponibile"
+
+msgid "Оплата онлайн"
+msgstr "Plata online"
+
+msgid "Описание платежной системы"
+msgstr "Descrierea sistemului de plăți"
+
+msgid "Данное описание предоставляет информацию о платежной системе"
+msgstr "Această descriere oferă informații despre sistemul de plăți"
+
+msgid "Код продавца (Sale Area Code)"
+msgstr "Cod vânzător (Sale Area Code)"
+
+msgid "Нужен если Вы собираетесь принимать платежи с нескольких проектов в одном аккаунте"
+msgstr "Este necesar dacă acceptați plăți din mai multe proiecte într-un singur cont"
+
+msgid "Мерчант ид."
+msgstr "ID comerciant."
+
+msgid "Уникальный номер в системе paynet.md"
+msgstr "Număr unic în sistemul paynet.md"
+
+msgid "Секретный ключ, предоставлен платежной системой"
+msgstr "Cheia secretă furnizată de sistemul de plăți"
+
+msgid "Код пользователя"
+msgstr "Cod utilizator"
+
+msgid "Код пользователя нужен для генерации формы, предоставлен платежной системой"
+msgstr "Codul utilizatorului este necesar pentru a genera formularul furnizat de sistemul de plăți"
+
+msgid "Имя пользователя"
+msgstr "Nume utilizator"
+
+msgid "Имя пользователя API для проверки платежа"
+msgstr "Numele de utilizator API pentru a verifica plata"
+
+msgid "Пароль пользователя"
+msgstr "Parola de utilizator"
+
+msgid "Пароль API  для проверки платежа"
+msgstr "Parola API pentru a verifica plata"
+
+msgid "Спасибо за Ваш выбор, пожалуйста, нажмите кнопку ниже, чтобы перейти к оплате."
+msgstr "Vă mulțumim pentru alegerea dvs., faceți clic pe butonul de mai jos pentru a continua plata."
+
+msgid "Данный платеж уже был переправлен на сторону платежного шлюза."
+msgstr "Această plată a fost deja trimisă pe partea gateway-ului de plată."
+
+msgid "Если платеж не прошел успешно повторите занова или дождитесь его обработки или свяжитесть со службой поддержки."
+msgstr "Dacă plata nu a avut succes, repetați procesul sau așteptați ca acesta să fie procesată sau luați legatura cu serviciul suport clienți."
+
+msgid "Вернуться в корзину"
+msgstr "Înapoi la coșul de cumpărături"
+
+msgid "Отказаться от оплаты и вернуться в корзину"
+msgstr "Anulează plata și du-te la cosul de cumparaturi"
+
+msgid "Платеж был подтверждён на стороне платежного шлюза paynet.md."
+msgstr "Plata a fost aprobată pe portalul de plată paynet.md."
+
+msgid "Платеж был отменен. Не найдено или исключение в методе получения статуса."
+msgstr "Plata a fost anulată. Nu este găsit sau excepție în metoda obține statutul."
+
+msgid "Платеж был отменен, так как произошла ошибка при соединении с платежным шлюзом."
+msgstr "Plata a fost anulată deoarece a apărut o eroare la conectarea la gateway-ul de plată."
+
+msgid "Платеж был отменен клиентом на сайте платежного шлюза."
+msgstr "Plata a fost anulată de client pe site-ul gateway-ului de plată."
+
+msgid "Оплатить"
+msgstr "Plătește"
+
+msgid "Вкл. / Выкл."
+msgstr "On / Off"
+
+msgid "Включить"
+msgstr "Permit"

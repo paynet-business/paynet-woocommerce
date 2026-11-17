@@ -1,0 +1,108 @@
+# Translation of WordPress - 4.7.x - Administration - Network Admin in Russian
+# This file is distributed under the same license as the WordPress - 4.7.x - Administration - Network Admin package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2017-12-22 16:17+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 2.0.5\n"
+"Language: en\n"
+"Project-Id-Version: WordPress - 4.7.x - Administration - Network Admin\n"
+"POT-Creation-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+
+msgid "Вы используете тестовый режим для обращения к платежному шлюзу !!!"
+msgstr "You are using a test mode for an access to payment gateway !!!"
+
+msgid "Тестовый режим"
+msgstr "Test mode"
+
+msgid "Установите для приема реальных платежей"
+msgstr "Set to accept real payments."
+
+msgid "Имя платежной системы"
+msgstr "Payment system name"
+
+msgid "Данное название отображается в списке доступных платежных систем"
+msgstr "This name is displayed in the list of available payment systems"
+
+msgid "Оплата онлайн"
+msgstr "Online payment"
+
+msgid "Описание платежной системы"
+msgstr "Payment system description"
+
+msgid "Данное описание предоставляет информацию о платежной системе"
+msgstr "This description provides information about the payment system"
+
+msgid "Код продавца (Sale Area Code)"
+msgstr "Sale Area Code"
+
+msgid "Нужен если Вы собираетесь принимать платежи с нескольких проектов в одном аккаунте"
+msgstr "Needed if you are going to accept payments from several projects in one account"
+
+msgid "Мерчант ид."
+msgstr "Merchant id."
+
+msgid "Уникальный номер в системе paynet.md"
+msgstr "Unique number in the paynet.md system"
+
+msgid "Секретный ключ, предоставлен платежной системой"
+msgstr "Secret key provided by the payment system"
+
+msgid "Код пользователя"
+msgstr "User Code"
+
+msgid "Код пользователя нужен для генерации формы, предоставлен платежной системой"
+msgstr "The user code is needed to generate the form, provided by the payment system"
+
+msgid "Имя пользователя"
+msgstr "Username"
+
+msgid "Имя пользователя API для проверки платежа"
+msgstr "API username to verify payment"
+
+msgid "Пароль пользователя"
+msgstr "User password"
+
+msgid "Пароль API  для проверки платежа"
+msgstr "API password to verify payment"
+
+msgid "Спасибо за Ваш выбор, пожалуйста, нажмите кнопку ниже, чтобы перейти к оплате."
+msgstr "Thank you for your choice, please click the button below to proceed to payment."
+
+msgid "Данный платеж уже был переправлен на сторону платежного шлюза."
+msgstr "This payment has already been forwarded to the side of the payment gateway."
+
+msgid "Если платеж не прошел успешно повторите занова или дождитесь его обработки или свяжитесть со службой поддержки."
+msgstr "If the payment was not successful, repeat the process or wait for it to be processed, or call the customer support service."
+
+msgid "Вернуться в корзину"
+msgstr "Return to shopping cart"
+
+msgid "Отказаться от оплаты и вернуться в корзину"
+msgstr "Cancel payment and go to shopping cart"
+
+msgid "Платеж был подтверждён на стороне платежного шлюза paynet.md."
+msgstr "The payment was approved on the paynet.md payment gateway."
+
+msgid "Платеж был отменен. Не найдено или исключение в методе получения статуса."
+msgstr "The payment was canceled. Not found or exeption in method get status."
+
+msgid "Платеж был отменен, так как произошла ошибка при соединении с платежным шлюзом."
+msgstr "The payment was canceled because an error occurred while connecting to the payment gateway."
+
+msgid "Платеж был отменен клиентом на сайте платежного шлюза."
+msgstr "The payment was canceled by a customer on the payment gateway site."
+
+msgid "Оплатить"
+msgstr "Pay"
+
+msgid "Вкл. / Выкл."
+msgstr "On / Off"
+
+msgid "Включить"
+msgstr "Enable"

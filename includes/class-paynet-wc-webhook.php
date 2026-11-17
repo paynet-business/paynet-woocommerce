@@ -3,7 +3,8 @@
  * `?wc-api=WC_Gateway_Paynet` — the old plugin's address, kept so nothing changes on Paynet's side (ТЗ разд. 11).
  *
  * POST with JSON → notification (ТЗ 7.2). GET with paynet_return → customer return (ТЗ 7.4).
- * Anything else (old return links `&result=…&id=…`) → home page, no changes.
+ * GET with `id` + `result` → return link of the old plugin: status check only (ТЗ разд. 11).
+ * Anything else → home page, no changes.
  *
  * @package Paynet_WC
  */
@@ -51,6 +52,8 @@ class Paynet_WC_Webhook {
 			$this->notification();
 		} elseif ( in_array( $return, array( 'success', 'cancel' ), true ) ) {
 			$this->customer_return( $return );
+		} elseif ( isset( $_GET['id'], $_GET['result'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Old return link; status only from the API.
+			$this->legacy_return( sanitize_text_field( wp_unslash( $_GET['id'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 		wp_safe_redirect( home_url( '/' ) );
 		exit;
@@ -98,8 +101,14 @@ class Paynet_WC_Webhook {
 		}
 
 		if ( ! $order ) {
-			// Orders of the old plugin are handled in stage 5 (ТЗ разд. 11).
-			$this->gateway->log( sprintf( 'Notification for unknown Order %s: answered 200.', $external ) );
+			// Order of the old plugin (ТЗ разд. 11): status only from GET by its ExternalId; never 4xx.
+			$legacy = Paynet_WC_Legacy::find_order( $external );
+			if ( $legacy ) {
+				$result = $this->gateway->legacy()->confirm( $legacy, $external );
+				$this->gateway->log( sprintf( 'Notification for old plugin order %d: %s.', $legacy->get_id(), $result ) );
+			} else {
+				$this->gateway->log( sprintf( 'Notification for unknown Order %s: answered 200.', $external ) );
+			}
 			$this->respond( 200, array( 'ResultCode' => 'SUCCESS' ) );
 		}
 
@@ -162,6 +171,26 @@ class Paynet_WC_Webhook {
 		}
 		// 1/3 after success, or the API did not answer: "being processed", the background check continues.
 		$this->redirect( add_query_arg( 'paynet_pending', '1', $this->gateway->get_return_url( $order ) ) );
+	}
+
+	/**
+	 * Return link of the old plugin `?wc-api=WC_Gateway_Paynet&id=<ExternalId>&result=ok|error` (ТЗ разд. 11).
+	 * Only a status check: paid → "Thank you" page; anything else → home page, the order is not changed
+	 * (the old plugin cancelled orders here — not repeated). `result` is ignored.
+	 *
+	 * @param string $external ExternalId.
+	 */
+	private function legacy_return( $external ) {
+		$order = Paynet_WC_Legacy::find_order( $external );
+		if ( ! $order ) {
+			return; // → home page.
+		}
+		$result = $this->gateway->legacy()->confirm( $order, $external );
+		$this->gateway->log( sprintf( 'Old plugin return link for order %d: %s.', $order->get_id(), $result ) );
+		$order = wc_get_order( $order->get_id() );
+		if ( $order && ( $order->is_paid() || 'review' === $result ) ) {
+			$this->redirect( $order->get_checkout_order_received_url() );
+		}
 	}
 
 	/**

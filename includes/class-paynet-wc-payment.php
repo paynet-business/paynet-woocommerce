@@ -74,20 +74,24 @@ class Paynet_WC_Payment {
 		if ( '' === $paynet_order || ! ctype_digit( $paynet_order ) ) {
 			return null;
 		}
+		// `meta_key` / `meta_value`, not `meta_query`: the posts storage (HPOS off) silently drops `meta_query`
+		// in wc_get_orders and would return the latest order of the shop. Both storages support these two.
 		$orders = wc_get_orders(
 			array(
-				'limit'      => 1,
+				'limit'      => 5,
 				'type'       => 'shop_order',
 				'status'     => array_keys( wc_get_order_statuses() ),
-				'meta_query' => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-					array(
-						'key'   => self::META_ORDER,
-						'value' => $paynet_order,
-					),
-				),
+				'meta_key'   => self::META_ORDER, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value' => $paynet_order, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			)
 		);
-		return $orders ? $orders[0] : null;
+		// Never trust the query alone: the order must really carry this Paynet Order.
+		foreach ( $orders as $order ) {
+			if ( (string) $order->get_meta( self::META_ORDER ) === $paynet_order ) {
+				return $order;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -540,7 +544,7 @@ class Paynet_WC_Payment {
 	 * @param WC_Order $order Order.
 	 * @param string   $text  Text.
 	 */
-	private function mail_admin( WC_Order $order, $text ) {
+	public function mail_admin( WC_Order $order, $text ) {
 		$to = get_option( 'admin_email' );
 		if ( ! $to ) {
 			return;
@@ -620,7 +624,7 @@ class Paynet_WC_Payment {
 	 * @param int $order_id Order ID.
 	 * @return bool
 	 */
-	private function lock( $order_id ) {
+	public function lock( $order_id ) {
 		$key = 'paynet_wc_lock_' . (int) $order_id;
 		if ( add_option( $key, time(), '', false ) ) {
 			return true;
@@ -645,7 +649,7 @@ class Paynet_WC_Payment {
 	 *
 	 * @param int $order_id Order ID.
 	 */
-	private function unlock( $order_id ) {
+	public function unlock( $order_id ) {
 		delete_option( 'paynet_wc_lock_' . (int) $order_id );
 	}
 }

@@ -8,7 +8,7 @@
 define( 'ABSPATH', __DIR__ . '/' );
 
 require dirname( __DIR__ ) . '/vendor/autoload.php';
-foreach ( array( 'order-number', 'signature', 'text', 'order-body', 'refund-rules', 'cards' ) as $paynet_wc_class ) {
+foreach ( array( 'order-number', 'signature', 'text', 'order-body', 'refund-rules', 'cards', 'legacy' ) as $paynet_wc_class ) {
 	$paynet_wc_file = dirname( __DIR__ ) . '/includes/class-paynet-wc-' . $paynet_wc_class . '.php';
 	if ( file_exists( $paynet_wc_file ) ) {
 		require $paynet_wc_file;
