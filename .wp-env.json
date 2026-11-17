@@ -10,6 +10,7 @@
         "WP_DEBUG_LOG": true
     },
     "mappings": {
-        "wp-content/mu-plugins": "./e2e/mu-plugin"
+        "wp-content/mu-plugins": "./e2e/mu-plugin",
+        "wp-content/plugins/paynet-gateway": "./e2e/fixtures/paynet-gateway"
     }
 }

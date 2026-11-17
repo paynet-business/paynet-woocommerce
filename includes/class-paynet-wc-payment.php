@@ -540,7 +540,7 @@ class Paynet_WC_Payment {
 	 * @param WC_Order $order Order.
 	 * @param string   $text  Text.
 	 */
-	private function mail_admin( WC_Order $order, $text ) {
+	public function mail_admin( WC_Order $order, $text ) {
 		$to = get_option( 'admin_email' );
 		if ( ! $to ) {
 			return;
@@ -620,7 +620,7 @@ class Paynet_WC_Payment {
 	 * @param int $order_id Order ID.
 	 * @return bool
 	 */
-	private function lock( $order_id ) {
+	public function lock( $order_id ) {
 		$key = 'paynet_wc_lock_' . (int) $order_id;
 		if ( add_option( $key, time(), '', false ) ) {
 			return true;
@@ -645,7 +645,7 @@ class Paynet_WC_Payment {
 	 *
 	 * @param int $order_id Order ID.
 	 */
-	private function unlock( $order_id ) {
+	public function unlock( $order_id ) {
 		delete_option( 'paynet_wc_lock_' . (int) $order_id );
 	}
 }

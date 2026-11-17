@@ -137,6 +137,15 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Orders of the old plugin (ТЗ разд. 11).
+	 *
+	 * @return Paynet_WC_Legacy
+	 */
+	public function legacy() {
+		return new Paynet_WC_Legacy( $this );
+	}
+
+	/**
 	 * Saved cards.
 	 *
 	 * @return Paynet_WC_Cards

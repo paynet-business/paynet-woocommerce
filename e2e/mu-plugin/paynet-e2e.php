@@ -16,6 +16,13 @@ const PAYNET_E2E_MOCKS = 'paynet_e2e_mocks';
 const PAYNET_E2E_MAILS = 'paynet_e2e_mails';
 const PAYNET_E2E_LOG   = 'paynet_e2e_requests';
 
+// The old plugin (stage 5) emits PHP/WordPress notices on every request on PHP 8 / current WordPress
+// (e.g. a deprecated load_plugin_textdomain argument). While it is active, keep them in debug.log only,
+// so pages and helper JSON stay clean.
+if ( in_array( 'paynet-gateway/paynet-gateway.php', (array) get_option( 'active_plugins', array() ), true ) ) {
+	ini_set( 'display_errors', '0' ); // phpcs:ignore WordPress.PHP.IniSet.display_errors_Disallowed
+}
+
 // Mocks: [{method, path, status, body, network_error, times}] — first match wins, `times` decrements.
 add_filter(
 	'pre_http_request',
@@ -348,6 +355,37 @@ add_action(
 				},
 			)
 		);
+		// Stage 5: the old "Paynet Moldova Gateway" (e2e/fixtures/paynet-gateway, mapped into wp-content/plugins).
+		register_rest_route(
+			$ns,
+			'/legacy',
+			array(
+				'methods'             => 'POST',
+				'permission_callback' => $open,
+				'callback'            => 'paynet_e2e_legacy_switch',
+			)
+		);
+		register_rest_route(
+			$ns,
+			'/legacy-order',
+			array(
+				'methods'             => 'POST',
+				'permission_callback' => $open,
+				'callback'            => 'paynet_e2e_legacy_order',
+			)
+		);
+		register_rest_route(
+			$ns,
+			'/paynet-external/(?P<ext>\d+)',
+			array(
+				'methods'             => 'GET',
+				'permission_callback' => $open,
+				'callback'            => static function ( $req ) {
+					$res = Paynet_WC_Plugin::gateway()->api( 'test' )->get_by_order( (string) $req['ext'] );
+					return array( 'code' => $res['code'], 'data' => $res['data'] );
+				},
+			)
+		);
 		register_rest_route(
 			$ns,
 			'/options',
@@ -551,5 +589,89 @@ function paynet_e2e_gateway_state() {
 		'configured' => $g ? $g->is_configured() : null,
 		'settings'   => $settings,
 		'checkout'   => (int) get_option( 'woocommerce_checkout_page_id' ),
+	);
+}
+
+const PAYNET_E2E_LEGACY = 'paynet-gateway/paynet-gateway.php';
+
+/**
+ * Activate (with the public test credentials, test mode) or deactivate the old plugin.
+ *
+ * @param WP_REST_Request $req Request: {active: bool}.
+ * @return array|WP_Error
+ */
+function paynet_e2e_legacy_switch( $req ) {
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	$p = (array) $req->get_json_params();
+	if ( empty( $p['active'] ) ) {
+		deactivate_plugins( PAYNET_E2E_LEGACY, true );
+		return array( 'active' => is_plugin_active( PAYNET_E2E_LEGACY ) );
+	}
+	update_option(
+		'woocommerce_paynet_settings',
+		array(
+			'enabled'        => 'yes',
+			'mode'           => 'no', // "no" = test environment in the old plugin.
+			'title'          => 'Paynet (old plugin)',
+			'description'    => 'Old plugin',
+			'merchant_id'    => '265505',
+			'sale_area_code' => 'onlidocumentation_md',
+			'secret_key'     => 'F90D6485-9CCC-458B-96A3-8958AF9B4458',
+			'user_login'     => '771064',
+			'user_password'  => 'sLgMnGWJ',
+		)
+	);
+	ob_start(); // The old plugin prints notices on PHP 8 / current WooCommerce.
+	$result = activate_plugin( PAYNET_E2E_LEGACY, '', false, true );
+	ob_end_clean();
+	if ( is_wp_error( $result ) ) {
+		return $result;
+	}
+	return array( 'active' => is_plugin_active( PAYNET_E2E_LEGACY ) );
+}
+
+/**
+ * Order of the old plugin with its own v0.5 payment form (generate_form of the old gateway).
+ * The checkout of the old plugin is not used: on current WooCommerce it does not reach its receipt page.
+ *
+ * @param WP_REST_Request $req Request: {product_id}.
+ * @return array|WP_Error
+ */
+function paynet_e2e_legacy_order( $req ) {
+	$gateways = WC()->payment_gateways()->payment_gateways();
+	if ( ! isset( $gateways['paynet'] ) ) {
+		return new WP_Error( 'no_legacy', 'Old plugin is not active', array( 'status' => 409 ) );
+	}
+	$p     = (array) $req->get_json_params();
+	$order = wc_create_order();
+	$order->add_product( wc_get_product( (int) $p['product_id'] ), 1 );
+	$order->set_address(
+		array(
+			'first_name' => 'Old',
+			'last_name'  => 'Plugin',
+			'email'      => 'e2e-legacy@example.com',
+			'phone'      => '37360000000',
+			'country'    => 'MD',
+			'city'       => 'Chisinau',
+			'address_1'  => 'Str. Test 1',
+		),
+		'billing'
+	);
+	$order->set_payment_method( 'paynet' );
+	$order->set_payment_method_title( 'Paynet (old plugin)' );
+	$order->set_created_via( 'checkout' );
+	$order->calculate_totals();
+	$order->save();
+
+	ob_start();
+	$form = $gateways['paynet']->generate_form( $order->get_id() );
+	ob_end_clean();
+	$external = preg_match( '/name="ExternalID" value="(\d+)"/', $form, $m ) ? $m[1] : '';
+	return array(
+		'id'       => $order->get_id(),
+		'key'      => $order->get_order_key(),
+		'external' => $external,
+		'amount'   => (int) round( $order->get_total() * 100 ),
+		'form'     => $form,
 	);
 }
