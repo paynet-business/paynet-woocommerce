@@ -3,6 +3,8 @@ const crypto = require( 'crypto' );
 const { expect } = require( '@playwright/test' );
 
 const CARD = { number: '4111111111111111', month: '12', year: '27', cvv: '777' };
+// Second test card for saved-card scenarios (accepted by the Paynet test page, probe 16.11.2026).
+const CARD_MC = { number: '5555555555554444', month: '03', year: '29', cvv: '123' };
 const NOTIFY_KEY = 'e2e-notification-key-1234';
 const API = 'https://ecom-api-test.paynet.md';
 const TEST_CREDS = { username: '771064', password: 'sLgMnGWJ', saleArea: 'onlidocumentation_md' };
@@ -28,6 +30,12 @@ const setMeta = ( request, id, meta ) => helper( request, 'POST', `/order/${ id 
 const log = ( request ) => helper( request, 'GET', '/log' );
 const createOrder = ( request, data ) => helper( request, 'POST', '/create-order', data );
 const helperState = ( request ) => helper( request, 'GET', '/state' );
+const cards = async ( request, user ) => ( await helper( request, 'GET', `/cards/${ user }` ) ).cards;
+const clearCards = ( request, user ) => helper( request, 'DELETE', `/cards/${ user }` );
+const addCard = ( request, user, card ) => helper( request, 'POST', `/cards/${ user }`, card );
+const markPaid = ( request, id, data ) => helper( request, 'POST', `/order/${ id }/paid`, data );
+const paynetPayment = ( request, id ) => helper( request, 'GET', `/paynet/${ id }` );
+const createUser = ( request, login, pass ) => helper( request, 'POST', '/user', { login, pass } );
 
 function chisinau( minutesAhead ) {
 	const parts = Object.fromEntries( new Intl.DateTimeFormat( 'en-GB', {
@@ -104,9 +112,9 @@ async function sendNotification( request, n, hash ) {
 }
 
 // Fill the Paynet test payment page (card fields in Cybersource iframes) and press Pay — same as the docs portal E2E.
-async function payOnPaynet( page ) {
+async function payOnPaynet( page, card = CARD ) {
 	await page.waitForURL( /paynet\.md/, { timeout: 60000 } );
-	await page.waitForLoadState( 'networkidle' ).catch( () => {} );
+	await page.waitForLoadState( 'networkidle', { timeout: 20000 } ).catch( () => {} );
 	await page.waitForTimeout( 2500 );
 	let numberFrame;
 	let cvvFrame;
@@ -118,10 +126,10 @@ async function payOnPaynet( page ) {
 		}
 	}
 	expect( numberFrame, 'card number field on the Paynet page' ).toBeTruthy();
-	await numberFrame.fill( '#number', CARD.number );
-	await cvvFrame.fill( '#securityCode', CARD.cvv );
+	await numberFrame.fill( '#number', card.number );
+	await cvvFrame.fill( '#securityCode', card.cvv );
 	await page.click( '#CardExp' );
-	await page.keyboard.type( CARD.month + CARD.year, { delay: 80 } );
+	await page.keyboard.type( card.month + card.year, { delay: 80 } );
 	await page.waitForTimeout( 800 );
 	await page.click( '#submit-default' );
 }
@@ -207,6 +215,9 @@ async function classicPlaceOrder( page, ids, opts = {} ) {
 	}
 	await expect( page.locator( 'li.payment_method_paynet_wc' ) ).toContainText( 'Paynet' );
 	await waitUnblocked( page );
+	if ( opts.card ) {
+		await page.locator( '.paynet-wc-card', { hasText: opts.card } ).locator( 'input' ).check(); // Saved card or "New card".
+	}
 	await page.click( '#place_order' );
 }
 
@@ -300,6 +311,6 @@ function sharedState() {
 
 module.exports = {
 	sharedState,
-	API, TEST_CREDS, NOTIFY_KEY, setup, helperState, occupyOrder, order, latestOrder, runChecks, setMocks, setOptions, setMeta, log, createOrder,
+	API, TEST_CREDS, NOTIFY_KEY, CARD, CARD_MC, cards, clearCards, addCard, markPaid, paynetPayment, createUser, setup, helperState, occupyOrder, order, latestOrder, runChecks, setMocks, setOptions, setMeta, log, createOrder,
 	notification, sendNotification, payOnPaynet, blockReturn, waitFor, classicPlaceOrder, blocksPlaceOrder, addToCart, login, paidStatus, waitUnblocked,
 };

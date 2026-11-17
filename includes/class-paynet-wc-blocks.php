@@ -52,10 +52,14 @@ final class Paynet_WC_Blocks extends AbstractPaymentMethodType {
 	 * @return string[]
 	 */
 	public function get_payment_method_script_handles() {
+		wp_register_script( 'paynet-wc-cards', PAYNET_WC_URL . 'assets/js/cards.js', array(), PAYNET_WC_VERSION, true );
+		wp_localize_script( 'paynet-wc-cards', 'paynetWcCards', Paynet_WC_Cards::script_data() );
+		wp_register_style( 'paynet-wc-cards', PAYNET_WC_URL . 'assets/css/cards.css', array(), PAYNET_WC_VERSION );
+		wp_enqueue_style( 'paynet-wc-cards' );
 		wp_register_script(
 			'paynet-wc-blocks',
 			PAYNET_WC_URL . 'assets/js/blocks.js',
-			array( 'wc-blocks-registry', 'wc-settings', 'wp-element', 'wp-html-entities' ),
+			array( 'wc-blocks-registry', 'wc-settings', 'wp-element', 'wp-html-entities', 'paynet-wc-cards' ),
 			PAYNET_WC_VERSION,
 			true
 		);
@@ -72,6 +76,9 @@ final class Paynet_WC_Blocks extends AbstractPaymentMethodType {
 			'title'       => $this->get_setting( 'title' ),
 			'description' => $this->gateway ? $this->gateway->description : $this->get_setting( 'description' ),
 			'supports'    => $this->gateway ? array_values( $this->gateway->supports ) : array( 'products' ),
+			// Saved cards of the logged-in customer (no CardLinkHash in the browser; ТЗ разд. 9б).
+			'cards'       => $this->gateway && is_user_logged_in() ? $this->gateway->cards()->list_for_checkout( get_current_user_id() ) : array(),
+			'cardsText'   => Paynet_WC_Cards::script_data(),
 		);
 	}
 }

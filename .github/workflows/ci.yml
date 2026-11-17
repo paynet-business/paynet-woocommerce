@@ -67,7 +67,7 @@ jobs:
       matrix:
         hpos: ['on', 'off']
     env:
-      STAGE: '3'
+      STAGE: '4'
       HPOS: ${{ matrix.hpos }}
     defaults:
       run:

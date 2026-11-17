@@ -194,6 +194,7 @@ add_action(
 						'currency' => get_woocommerce_currency(),
 						'coming_soon' => get_option( 'woocommerce_coming_soon' ),
 						'myaccount' => wc_get_page_permalink( 'myaccount' ),
+						'payment_methods' => wc_get_account_endpoint_url( 'payment-methods' ),
 						'gateway'   => paynet_e2e_gateway_state(),
 					);
 				},
@@ -243,6 +244,107 @@ add_action(
 						'requests' => get_option( PAYNET_E2E_LOG, array() ),
 						'mails'    => get_option( PAYNET_E2E_MAILS, array() ),
 					);
+				},
+			)
+		);
+		// Stage 4: saved cards and refunds.
+		register_rest_route(
+			$ns,
+			'/cards/(?P<user>\d+)',
+			array(
+				array(
+					'methods'             => 'GET',
+					'permission_callback' => $open,
+					'callback'            => 'paynet_e2e_cards',
+				),
+				array(
+					'methods'             => 'DELETE',
+					'permission_callback' => $open,
+					'callback'            => static function ( $req ) {
+						foreach ( WC_Payment_Tokens::get_customer_tokens( (int) $req['user'], 'paynet_wc' ) as $t ) {
+							WC_Payment_Tokens::delete( $t->get_id() ); // Local only, no API call.
+						}
+						return paynet_e2e_cards( $req );
+					},
+				),
+				array(
+					'methods'             => 'POST',
+					'permission_callback' => $open,
+					'callback'            => static function ( $req ) {
+						$p = $req->get_json_params();
+						$t = new WC_Payment_Token_CC();
+						$t->set_gateway_id( 'paynet_wc' );
+						$t->set_user_id( (int) $req['user'] );
+						$t->set_token( (string) $p['hash'] );
+						$t->set_last4( (string) $p['last4'] );
+						$t->set_card_type( isset( $p['type'] ) ? (string) $p['type'] : 'visa' );
+						$t->set_expiry_month( isset( $p['month'] ) ? (string) $p['month'] : '12' );
+						$t->set_expiry_year( isset( $p['year'] ) ? (string) $p['year'] : '2030' );
+						$t->add_meta_data( 'paynet_mode', isset( $p['mode'] ) ? (string) $p['mode'] : 'test', true );
+						$t->add_meta_data( 'paynet_sale_area', 'onlidocumentation_md', true );
+						$t->add_meta_data( 'paynet_customer', Paynet_WC_Cards::code_for( (int) $req['user'], 'test' ), true );
+						$t->save();
+						return array( 'id' => $t->get_id() ) + paynet_e2e_cards( $req );
+					},
+				),
+			)
+		);
+		register_rest_route(
+			$ns,
+			'/user',
+			array(
+				'methods'             => 'POST',
+				'permission_callback' => $open,
+				'callback'            => static function ( $req ) {
+					$p    = $req->get_json_params();
+					$user = get_user_by( 'login', $p['login'] );
+					$id   = $user ? $user->ID : wp_create_user( $p['login'], $p['pass'], $p['login'] . '@example.com' );
+					( new WP_User( $id ) )->set_role( 'customer' );
+					foreach ( array( 'billing_first_name' => 'Other', 'billing_last_name' => 'Customer', 'billing_phone' => '37360000001', 'billing_country' => 'MD', 'billing_city' => 'Chisinau', 'billing_address_1' => 'Str. Test 2', 'billing_postcode' => '2001', 'billing_email' => $p['login'] . '@example.com' ) as $k => $v ) {
+						update_user_meta( $id, $k, $v );
+					}
+					return array( 'id' => $id );
+				},
+			)
+		);
+		// Mark an order as paid through Paynet without a real payment (rules that the test API cannot produce).
+		register_rest_route(
+			$ns,
+			'/order/(?P<id>\d+)/paid',
+			array(
+				'methods'             => 'POST',
+				'permission_callback' => $open,
+				'callback'            => static function ( $req ) {
+					$p     = $req->get_json_params();
+					$order = wc_get_order( (int) $req['id'] );
+					$order->update_meta_data( '_paynet_order', (string) $p['paynet_order'] );
+					$order->update_meta_data( '_paynet_mode', 'test' );
+					$order->update_meta_data( '_paynet_payment_id', (string) $p['payment_id'] );
+					$order->update_meta_data( '_paynet_amount', (int) round( $order->get_total() * 100 ) );
+					$order->update_meta_data( '_paynet_paid_amount', (int) $p['paid'] );
+					$order->update_meta_data( '_paynet_final', 'paid' );
+					if ( ! empty( $p['money_type'] ) ) {
+						$order->update_meta_data( '_paynet_money_type', (string) $p['money_type'] );
+					}
+					$order->set_transaction_id( (string) $p['payment_id'] );
+					$order->set_date_paid( time() - DAY_IN_SECONDS * ( isset( $p['days_ago'] ) ? (int) $p['days_ago'] : 0 ) );
+					$order->set_status( 'processing' );
+					$order->save();
+					return paynet_e2e_order( $req );
+				},
+			)
+		);
+		// Paynet payment as the API returns it now (real call through the plugin's client).
+		register_rest_route(
+			$ns,
+			'/paynet/(?P<id>\d+)',
+			array(
+				'methods'             => 'GET',
+				'permission_callback' => $open,
+				'callback'            => static function ( $req ) {
+					$order = wc_get_order( (int) $req['id'] );
+					$res   = Paynet_WC_Plugin::gateway()->api( 'test' )->get_by_order( (string) $order->get_meta( '_paynet_order' ) );
+					return array( 'code' => $res['code'], 'data' => $res['data'] );
 				},
 			)
 		);
@@ -386,6 +488,28 @@ function paynet_e2e_order( $req ) {
 		'received_url'   => $order->get_checkout_order_received_url(),
 		'key'            => $order->get_order_key(),
 	);
+}
+
+/**
+ * Saved Paynet cards of a user (hash shortened — it is a secret outside tests too).
+ *
+ * @param WP_REST_Request $req Request.
+ * @return array
+ */
+function paynet_e2e_cards( $req ) {
+	$list = array();
+	foreach ( WC_Payment_Tokens::get_customer_tokens( (int) $req['user'], 'paynet_wc' ) as $t ) {
+		$list[] = array(
+			'id'      => $t->get_id(),
+			'hash'    => substr( $t->get_token(), 0, 12 ),
+			'last4'   => $t instanceof WC_Payment_Token_CC ? $t->get_last4() : '',
+			'type'    => $t instanceof WC_Payment_Token_CC ? $t->get_card_type() : '',
+			'expiry'  => $t instanceof WC_Payment_Token_CC ? $t->get_expiry_month() . '/' . $t->get_expiry_year() : '',
+			'default' => $t->is_default(),
+			'mode'    => $t->get_meta( 'paynet_mode' ),
+		);
+	}
+	return array( 'cards' => $list );
 }
 
 /**
