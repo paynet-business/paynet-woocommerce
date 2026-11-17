@@ -1,4 +1,4 @@
-name: API probes — saved cards and refunds
+name: API probes — saved cards, refunds, old plugin orders
 
 # Pays test orders on the Paynet page with the public shared credentials (docs.paynet.md)
 # and prints findings to the log (ТЗ В-11…В-13). No WordPress involved.
@@ -29,4 +29,4 @@ jobs:
           node-version: '22'
       - run: npm install --no-audit --no-fund
       - run: npx playwright install --with-deps chromium
-      - run: npx playwright test -c probe/probe.config.js ${{ inputs.file || 'cards2' }}
+      - run: npx playwright test -c probe/probe.config.js ${{ inputs.file || 'legacy' }}
