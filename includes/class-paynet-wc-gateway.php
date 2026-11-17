@@ -25,6 +25,16 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Public test credentials of the shared test account (docs.paynet.md → Quick start).
 	 */
+	/**
+	 * Payment brands whose icons can be shown next to the method title (ТЗ этап 6, [Пр6-2]).
+	 */
+	const ICONS = array(
+		'visa'       => 'Visa',
+		'mastercard' => 'Mastercard',
+		'applepay'   => 'Apple Pay',
+		'googlepay'  => 'Google Pay',
+	);
+
 	const TEST_CREDENTIALS = array(
 		'username'   => '771064',
 		'password'   => 'sLgMnGWJ',
@@ -165,6 +175,56 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 	}
 
 	/**
+	 * Icons selected in the settings whose image is available: [ [ 'id', 'label', 'url' ] ].
+	 *
+	 * Image sources, first found: the plugin (assets/images/{id}.svg — official marks supplied by Paynet),
+	 * then WooCommerce's own card icons (Visa, Mastercard). Filter `paynet_wc_icon_url` sets any other URL.
+	 *
+	 * @return array[]
+	 */
+	public function icons() {
+		$selected = $this->get_option( 'icons', array_keys( self::ICONS ) );
+		$out      = array();
+		foreach ( (array) $selected as $id ) {
+			if ( ! isset( self::ICONS[ $id ] ) ) {
+				continue;
+			}
+			$url = '';
+			if ( is_readable( PAYNET_WC_DIR . 'assets/images/' . $id . '.svg' ) ) {
+				$url = PAYNET_WC_URL . 'assets/images/' . $id . '.svg';
+			} elseif ( in_array( $id, array( 'visa', 'mastercard' ), true ) && function_exists( 'WC' ) ) {
+				$rel = 'assets/images/icons/credit-cards/' . $id . '.svg';
+				if ( is_readable( WC()->plugin_path() . '/' . $rel ) ) {
+					$url = WC()->plugin_url() . '/' . $rel;
+				}
+			}
+			$url = (string) apply_filters( 'paynet_wc_icon_url', $url, $id );
+			if ( '' !== $url ) {
+				$out[] = array(
+					'id'    => $id,
+					'label' => self::ICONS[ $id ],
+					'url'   => $url,
+				);
+			}
+		}
+		return $out;
+	}
+
+	/**
+	 * Icons next to the title (classic checkout).
+	 *
+	 * @return string
+	 */
+	public function get_icon() {
+		$html = '';
+		foreach ( $this->icons() as $icon ) {
+			$html .= sprintf( '<img class="paynet-wc-icon paynet-wc-icon-%1$s" src="%2$s" alt="%3$s" />', esc_attr( $icon['id'] ), esc_url( $icon['url'] ), esc_attr( $icon['label'] ) );
+		}
+		$html = '' !== $html ? '<span class="paynet-wc-icons">' . $html . '</span>' : '';
+		return apply_filters( 'woocommerce_gateway_icon', $html, $this->id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce core hook.
+	}
+
+	/**
 	 * Debug log (only when enabled; no personal data is passed here).
 	 *
 	 * @param string $message Message.
@@ -222,6 +282,14 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 				'title'   => __( 'Description', 'paynet-for-woocommerce' ),
 				'type'    => 'textarea',
 				'default' => __( 'You will be redirected to the secure Paynet payment page.', 'paynet-for-woocommerce' ),
+			),
+			'icons'               => array(
+				'title'       => __( 'Icons', 'paynet-for-woocommerce' ),
+				'type'        => 'multiselect',
+				'class'       => 'wc-enhanced-select',
+				'options'     => self::ICONS,
+				'default'     => array_keys( self::ICONS ),
+				'description' => __( 'Shown next to the title at checkout. Show only the methods Paynet has enabled for your sale area.', 'paynet-for-woocommerce' ),
 			),
 			'mode'                => array(
 				'title'   => __( 'Mode', 'paynet-for-woocommerce' ),
@@ -325,7 +393,7 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 			'delete_on_uninstall' => array(
 				'title'   => __( 'Uninstall', 'paynet-for-woocommerce' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'Delete plugin settings when the plugin is deleted', 'paynet-for-woocommerce' ),
+				'label'   => __( 'Delete plugin data when the plugin is deleted: settings and saved cards in WordPress (cards stay saved in Paynet). Orders are not changed.', 'paynet-for-woocommerce' ),
 				'default' => 'no',
 			),
 		);

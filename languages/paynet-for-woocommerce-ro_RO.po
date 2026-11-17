@@ -1,0 +1,465 @@
+# Copyright (C) Paynet Services SRL
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Paynet for WooCommerce\n"
+"Report-Msgid-Bugs-To: https://github.com/paynet-business/paynet-woocommerce/issues\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ro_RO\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2);\n"
+"X-Domain: paynet-for-woocommerce\n"
+
+#. Plugin Name of the plugin
+msgid "Paynet for WooCommerce"
+msgstr "Paynet pentru WooCommerce"
+
+#. Plugin URI of the plugin
+msgid "https://docs.paynet.md/api/"
+msgstr "https://docs.paynet.md/api/"
+
+#. Description of the plugin
+msgid "Accept card, Apple Pay and Google Pay payments through the Paynet payment page (Paynet Ecom API)."
+msgstr "Acceptați plăți cu cardul, Apple Pay și Google Pay prin pagina de plată Paynet (Paynet Ecom API)."
+
+#. Author of the plugin
+msgid "Paynet Services SRL"
+msgstr "Paynet Services SRL"
+
+#. Author URI of the plugin
+msgid "https://paynet.md"
+msgstr "https://paynet.md"
+
+msgid "Paynet"
+msgstr "Paynet"
+
+msgid "Paid less than the order amount — check whether there was a discount"
+msgstr "Achitat mai puțin decât suma comenzii — verificați dacă a existat o reducere"
+
+msgid "Amount mismatch — check manually"
+msgstr "Sumă neconcordantă — verificați manual"
+
+msgid "Paynet: all"
+msgstr "Paynet: toate"
+
+msgid "Paid amount differs"
+msgstr "Suma achitată diferă"
+
+msgid "Card"
+msgstr "Card"
+
+#. translators: %s: card label
+#, php-format
+msgid "Paynet: card %s saved for the customer."
+msgstr "Paynet: cardul %s a fost salvat pentru client."
+
+msgid "This card cannot be deleted."
+msgstr "Acest card nu poate fi șters."
+
+msgid "Could not delete the card, please try again later."
+msgstr "Cardul nu a putut fi șters, încercați mai târziu."
+
+msgid "The card was deleted."
+msgstr "Cardul a fost șters."
+
+#. translators: %s: card label, e.g. "Visa •••• 4242"
+#, php-format
+msgid "Do you really want to delete the card %s?"
+msgstr "Sigur doriți să ștergeți cardul %s?"
+
+msgid "Yes"
+msgstr "Da"
+
+msgid "Cancel"
+msgstr "Anulează"
+
+msgid "New card"
+msgstr "Card nou"
+
+msgid "Delete"
+msgstr "Șterge"
+
+msgid "Card, Apple Pay and Google Pay payments through the Paynet payment page."
+msgstr "Plăți cu cardul, Apple Pay și Google Pay prin pagina de plată Paynet."
+
+msgid "TEST MODE: no real money is charged."
+msgstr "MOD DE TEST: nu se percep bani reali."
+
+msgid "Enable"
+msgstr "Activare"
+
+msgid "Enable Paynet"
+msgstr "Activează Paynet"
+
+msgid "Title for customers"
+msgstr "Titlu pentru clienți"
+
+msgid "Card, Apple Pay, Google Pay (Paynet)"
+msgstr "Card, Apple Pay, Google Pay (Paynet)"
+
+msgid "Description"
+msgstr "Descriere"
+
+msgid "You will be redirected to the secure Paynet payment page."
+msgstr "Veți fi redirecționat către pagina securizată de plată Paynet."
+
+msgid "Icons"
+msgstr "Pictograme"
+
+msgid "Shown next to the title at checkout. Show only the methods Paynet has enabled for your sale area."
+msgstr "Se afișează lângă titlu la finalizarea comenzii. Lăsați doar metodele activate de Paynet pentru punctul dvs. de vânzare."
+
+msgid "Mode"
+msgstr "Mod"
+
+msgid "Test"
+msgstr "Test"
+
+msgid "Live"
+msgstr "Producție"
+
+msgid "Test credentials"
+msgstr "Date de acces de test"
+
+msgid "API login"
+msgstr "Login API"
+
+msgid "API password"
+msgstr "Parolă API"
+
+msgid "SaleArea"
+msgstr "SaleArea"
+
+msgid "One sale area — one website: order numbers and the notification address are tied to the sale area."
+msgstr "Un punct de vânzare — un site: numerele comenzilor și adresa notificărilor sunt legate de punctul de vânzare."
+
+msgid "Notification key"
+msgstr "Cheia notificărilor"
+
+msgid "Live credentials"
+msgstr "Date de acces de producție"
+
+msgid "Connection"
+msgstr "Conexiune"
+
+msgid "Notifications and options"
+msgstr "Notificări și opțiuni"
+
+msgid "Callback URL"
+msgstr "Callback URL"
+
+msgid "Test order-number salt"
+msgstr "Sarea numerelor de comandă de test"
+
+msgid "Payment window (minutes)"
+msgstr "Termen de plată (minute)"
+
+msgid "Not longer than WooCommerce \"Hold stock\" — the shorter value is used. Minimum 10 minutes (Paynet does not accept a shorter payment window)."
+msgstr "Nu mai mult decât „Reține stocul” din WooCommerce — se folosește valoarea mai mică. Minimum 10 minute (Paynet nu acceptă un termen mai scurt)."
+
+msgid "Notification IP check"
+msgstr "Verificarea IP-ului notificărilor"
+
+msgid "Accept notifications only from Paynet IP addresses (turn off behind CDN or proxy)"
+msgstr "Acceptă notificări doar de la adresele IP Paynet (dezactivați dacă site-ul este după CDN sau proxy)"
+
+msgid "Debug log"
+msgstr "Jurnal de depanare"
+
+msgid "Write a debug log (WooCommerce → Status → Logs). No personal data is logged."
+msgstr "Scrie un jurnal de depanare (WooCommerce → Stare → Jurnale). Datele personale nu sunt înregistrate."
+
+msgid "Saved cards"
+msgstr "Carduri salvate"
+
+msgid "Let registered customers pay with saved cards. Enable only after Paynet turns on card saving for your sale area."
+msgstr "Permite clienților înregistrați să plătească cu carduri salvate. Activați doar după ce Paynet activează salvarea cardurilor pentru punctul dvs. de vânzare."
+
+msgid "Uninstall"
+msgstr "Dezinstalare"
+
+msgid "Delete plugin data when the plugin is deleted: settings and saved cards in WordPress (cards stay saved in Paynet). Orders are not changed."
+msgstr "Șterge datele modulului la ștergerea lui: setările și cardurile salvate în WordPress (cardurile rămân salvate în Paynet). Comenzile nu se modifică."
+
+msgid "In test mode you do not need to send this address and notifications do not arrive — see the test mode notice above."
+msgstr "În modul de test nu trebuie să comunicați această adresă, iar notificările nu sosesc — vedeți nota modului de test de mai sus."
+
+msgid "Send this address to Paynet for your sale area — without it payment notifications are not sent."
+msgstr "Comunicați această adresă către Paynet pentru punctul dvs. de vânzare — fără ea notificările despre plată nu sunt trimise."
+
+msgid "Copy"
+msgstr "Copiază"
+
+msgid "Regenerate"
+msgstr "Generează din nou"
+
+msgid "Added to order numbers in test mode so they do not collide with other users of the shared test account."
+msgstr "Se adaugă la numerele comenzilor în modul de test, ca să nu coincidă cu cele ale altor utilizatori ai contului de test comun."
+
+msgid "Fill with test credentials"
+msgstr "Completează cu datele de test"
+
+msgid "Public credentials of the shared Paynet test account (docs.paynet.md). Click \"Save changes\" afterwards."
+msgstr "Datele publice ale contului de test comun Paynet (docs.paynet.md). Apoi apăsați „Salvează modificările”."
+
+msgid "Check connection"
+msgstr "Verifică conexiunea"
+
+msgid "Signs in to the Paynet API of the selected mode with the login and password entered above (saving is not needed)."
+msgstr "Se autentifică în API-ul Paynet al modului selectat cu loginul și parola introduse mai sus (salvarea nu este necesară)."
+
+msgid "Not allowed."
+msgstr "Acțiune nepermisă."
+
+msgid "Enter the API login and password."
+msgstr "Introduceți loginul și parola API."
+
+msgid "Connected."
+msgstr "Conectat."
+
+#. translators: %s: error text
+#, php-format
+msgid "No answer from Paynet: %s"
+msgstr "Niciun răspuns de la Paynet: %s"
+
+#. translators: 1: HTTP code, 2: Paynet error code, 3: error text
+#, php-format
+msgid "Error %1$d %2$s: %3$s"
+msgstr "Eroare %1$d %2$s: %3$s"
+
+#. translators: %s: store currency
+#, php-format
+msgid "Paynet accepts MDL, USD and EUR. The store currency is %s, so Paynet is not shown to customers."
+msgstr "Paynet acceptă MDL, USD și EUR. Moneda magazinului este %s, de aceea Paynet nu este afișat clienților."
+
+msgid "Only MDL is available in the Paynet test environment."
+msgstr "În mediul de test Paynet este disponibil doar MDL."
+
+msgid "Enter the API login, password and SaleArea of the selected mode: until then Paynet is not shown to customers."
+msgstr "Introduceți loginul, parola API și SaleArea pentru modul selectat: până atunci Paynet nu este afișat clienților."
+
+msgid "TEST MODE"
+msgstr "MOD DE TEST"
+
+msgid "The Paynet test account is shared by all developers. Therefore:"
+msgstr "Contul de test Paynet este comun pentru toți dezvoltatorii. De aceea:"
+
+msgid "Payment notifications do not reach your site."
+msgstr "Notificările despre plată nu ajung pe site-ul dvs."
+
+msgid "Paynet sends notifications to one address per sale area, and the test sale area is shared. The order status is updated when the customer returns to your site after payment and by a background check (after 2, 5, 15 and 30 minutes). In live mode notifications arrive once you send the Callback URL to Paynet for your sale area."
+msgstr "Paynet trimite notificările la o singură adresă pentru fiecare punct de vânzare, iar punctul de test este comun. Starea comenzii se actualizează când clientul revine pe site după plată și printr-o verificare în fundal (după 2, 5, 15 și 30 de minute). În modul de producție notificările vor sosi după ce comunicați Callback URL către Paynet pentru punctul dvs. de vânzare."
+
+msgid "A payment creation error may be caused by an order number collision"
+msgstr "O eroare la crearea plății poate fi cauzată de coincidența numărului comenzii"
+
+msgid "with another user. The plugin adds a random salt to order numbers; if errors repeat, click \"Regenerate\"."
+msgstr "cu cel al altui utilizator. Modulul adaugă o sare aleatorie la numere; dacă erorile se repetă, apăsați „Generează din nou”."
+
+msgid "Could not proceed to payment, please try again."
+msgstr "Nu s-a putut trece la plată, încercați din nou."
+
+msgid "Order not found."
+msgstr "Comanda nu a fost găsită."
+
+msgid "The payment is being processed. The order status will be updated automatically within a few minutes."
+msgstr "Plata este în curs de procesare. Starea comenzii se va actualiza automat în câteva minute."
+
+#. translators: 1: Paynet ExternalId, 2: amount in Paynet, 3: order total
+#, php-format
+msgid "Paynet: order of the old plugin (Order %1$s) is paid, but the amount in Paynet %2$s differs from the order total %3$s. Check manually."
+msgstr "Paynet: comanda modulului vechi (Order %1$s) este achitată, dar suma din Paynet %2$s diferă de totalul comenzii %3$s. Verificați manual."
+
+#. translators: 1: Paynet payment ID, 2: Paynet ExternalId, 3: amount, method and card mask
+#, php-format
+msgid "Paynet: payment #%1$s of the old plugin order (Order %2$s) confirmed by the new plugin (%3$s)."
+msgstr "Paynet: plata #%1$s pentru comanda modulului vechi (Order %2$s) a fost confirmată de modulul nou (%3$s)."
+
+#. translators: 1: paid amount, 2: order amount
+#, php-format
+msgid "Attention: the paid amount (%1$s) is less than the order amount (%2$s). Check whether there was a discount."
+msgstr "Atenție: suma achitată (%1$s) este mai mică decât suma comenzii (%2$s). Verificați dacă a existat o reducere."
+
+msgid "Paynet: paid after the order was cancelled — check that the goods are in stock."
+msgstr "Paynet: achitat după anularea comenzii — verificați dacă produsele sunt în stoc."
+
+#. translators: %s: Paynet ExternalId
+#, php-format
+msgid "Paynet: notification or return for the old plugin order (Order %s) — the payment could not be checked through the new API. Check the payment manually in Paynet."
+msgstr "Paynet: notificare sau revenire pentru comanda modulului vechi (Order %s) — plata nu a putut fi verificată prin API-ul nou. Verificați plata manual în Paynet."
+
+msgid "Could not check the payment status. Please try again in a minute."
+msgstr "Starea plății nu a putut fi verificată. Încercați peste un minut."
+
+msgid "The payment is being processed. Please wait a few minutes before paying again."
+msgstr "Plata este în curs de procesare. Așteptați câteva minute înainte de a plăti din nou."
+
+msgid "Paynet: the limit of 999 payment attempts for this order is reached. Create a new order."
+msgstr "Paynet: s-a atins limita de 999 de încercări de plată pentru această comandă. Creați o comandă nouă."
+
+#. translators: %s: Paynet order number
+#, php-format
+msgid "Paynet: TECHNICAL_ERROR for Order %s in test mode, retrying with a new attempt number."
+msgstr "Paynet: TECHNICAL_ERROR pentru Order %s în modul de test, se reîncearcă cu un nou număr de încercare."
+
+msgid "Paynet: in the test environment this error may be caused by an order number that another user of the shared test account already used. Click \"Regenerate\" next to the test order-number salt in the plugin settings and try again."
+msgstr "Paynet: în mediul de test eroarea poate fi cauzată de un număr de comandă folosit deja de alt utilizator al contului de test comun. Apăsați „Generează din nou” lângă sarea numerelor de test în setările modulului și reîncercați."
+
+#. translators: 1: HTTP code, 2: Paynet error code, 3: trace ID, 4: error text
+#, php-format
+msgid "Paynet: payment was not created. HTTP %1$s, code %2$s, traceId %3$s. %4$s"
+msgstr "Paynet: plata nu a fost creată. HTTP %1$s, cod %2$s, traceId %3$s. %4$s"
+
+#. translators: 1: Paynet payment ID, 2: Paynet order number, 3: mode
+#, php-format
+msgid "Paynet payment #%1$s created, Order %2$s (%3$s mode)."
+msgstr "Plata Paynet #%1$s a fost creată, Order %2$s (mod: %3$s)."
+
+msgid "test"
+msgstr "test"
+
+msgid "live"
+msgstr "producție"
+
+#. translators: %s: order number
+#, php-format
+msgid "Order #%s"
+msgstr "Comanda nr. %s"
+
+msgid "Paynet: the payment was declined or cancelled (status 5). The customer can try again."
+msgstr "Paynet: plata a fost respinsă sau anulată (starea 5). Clientul poate încerca din nou."
+
+msgid "Paynet: the payment window has expired, the order was not paid."
+msgstr "Paynet: termenul de plată a expirat, comanda nu a fost achitată."
+
+#. translators: 1: amount from Paynet, 2: order amount
+#, php-format
+msgid "order amount in Paynet %1$s ≠ order amount %2$s"
+msgstr "suma comenzii în Paynet %1$s ≠ suma comenzii %2$s"
+
+#. translators: 1: paid amount, 2: order amount
+#, php-format
+msgid "paid %1$s is more than the order amount %2$s"
+msgstr "achitat %1$s — mai mult decât suma comenzii %2$s"
+
+msgid "payment ID differs from the created payment"
+msgstr "ID-ul plății diferă de cel al plății create"
+
+msgid "notification payment ID differs from the API"
+msgstr "ID-ul plății din notificare diferă de cel din API"
+
+#. translators: 1: PaidAmount in the notification, 2: paid amount in the API
+#, php-format
+msgid "PaidAmount in the notification %1$s ≠ API %2$s"
+msgstr "PaidAmount în notificare %1$s ≠ API %2$s"
+
+msgid "Paynet: amount mismatch, check manually."
+msgstr "Paynet: sumă neconcordantă, verificați manual."
+
+#. translators: 1: Paynet payment ID, 2: amount, method and card mask
+#, php-format
+msgid "Paynet: payment #%1$s confirmed (%2$s)."
+msgstr "Paynet: plata #%1$s a fost confirmată (%2$s)."
+
+#. translators: %s: order number
+#, php-format
+msgid "Paynet: check order #%s"
+msgstr "Paynet: verificați comanda nr. %s"
+
+msgid "Paynet for WooCommerce requires 64-bit PHP."
+msgstr "Paynet pentru WooCommerce necesită PHP pe 64 de biți."
+
+msgid "Plugin activation error"
+msgstr "Eroare la activarea modulului"
+
+msgid "Settings"
+msgstr "Setări"
+
+msgid "Paynet for WooCommerce requires WooCommerce to be installed and active."
+msgstr "Paynet pentru WooCommerce necesită WooCommerce instalat și activ."
+
+#. translators: %s: minimum WooCommerce version
+#, php-format
+msgid "Paynet for WooCommerce requires WooCommerce %s or later."
+msgstr "Paynet pentru WooCommerce necesită WooCommerce %s sau mai nou."
+
+msgid "The old \"Paynet Moldova Gateway\" plugin is active. Deactivate it: both plugins receive payment notifications at the same address."
+msgstr "Modulul vechi „Paynet Moldova Gateway” este activ. Dezactivați-l: ambele module primesc notificările despre plată la aceeași adresă."
+
+msgid "The refund response did not arrive; Paynet status confirms the refund."
+msgstr "Răspunsul la rambursare nu a sosit; starea din Paynet confirmă rambursarea."
+
+msgid "Paynet: no response to the refund request and the status does not show a refund. The refund was not recorded — check the payment in the Paynet cabinet before trying again."
+msgstr "Paynet: niciun răspuns la cererea de rambursare, iar starea nu arată o rambursare. Rambursarea nu a fost înregistrată — verificați plata în cabinetul Paynet înainte de a reîncerca."
+
+msgid "Paynet did not respond, the refund result is unknown. Check the payment status in the Paynet cabinet before trying again."
+msgstr "Paynet nu a răspuns, rezultatul rambursării este necunoscut. Verificați starea plății în cabinetul Paynet înainte de a reîncerca."
+
+#. translators: 1: amount, 2: error text from Paynet
+#, php-format
+msgid "Paynet: refund of %1$s rejected — %2$s"
+msgstr "Paynet: rambursarea de %1$s a fost respinsă — %2$s"
+
+#. translators: 1: amount, 2: full or partial
+#, php-format
+msgid "Paynet: refund of %1$s done (%2$s)."
+msgstr "Paynet: rambursarea de %1$s a fost efectuată (%2$s)."
+
+msgid "full"
+msgstr "integrală"
+
+msgid "partial"
+msgstr "parțială"
+
+#. translators: %s: refund reason
+#, php-format
+msgid "Reason: %s"
+msgstr "Motiv: %s"
+
+#. translators: %s: order number
+#, php-format
+msgid "Refund for order %s"
+msgstr "Rambursare pentru comanda %s"
+
+msgid "This order has no confirmed Paynet payment to refund."
+msgstr "Această comandă nu are o plată Paynet confirmată pentru rambursare."
+
+msgid "Paynet allows one refund per order, and this order has already been refunded through Paynet. Refund the rest manually if needed."
+msgstr "Paynet permite o singură rambursare per comandă, iar această comandă a fost deja rambursată prin Paynet. Dacă este necesar, rambursați restul manual."
+
+#. translators: %d: Paynet status
+#, php-format
+msgid "Paynet already shows a refund for this payment (status %d), for example made in the Paynet cabinet. Paynet allows one refund per order."
+msgstr "Paynet arată deja o rambursare pentru această plată (starea %d), de exemplu efectuată în cabinetul Paynet. Paynet permite o singură rambursare per comandă."
+
+msgid "Enter a refund amount greater than zero."
+msgstr "Introduceți o sumă de rambursare mai mare decât zero."
+
+#. translators: 1: refund amount, 2: paid amount
+#, php-format
+msgid "The refund amount %1$s is more than the amount paid through Paynet (%2$s)."
+msgstr "Suma rambursării %1$s este mai mare decât suma achitată prin Paynet (%2$s)."
+
+#. translators: %s: payment date
+#, php-format
+msgid "Paynet accepts refunds within 180 days of payment. This order was paid on %s."
+msgstr "Paynet acceptă rambursări în termen de 180 de zile de la plată. Această comandă a fost achitată pe %s."
+
+msgid "Paynet does not refund payments made by invoice (CASH_INVOICE). Return the money to the customer another way and refund manually."
+msgstr "Paynet nu rambursează plățile efectuate prin factură (CASH_INVOICE). Returnați banii clientului în alt mod și înregistrați rambursarea manual."
+
+msgid "The refund cannot be made through Paynet."
+msgstr "Rambursarea nu poate fi efectuată prin Paynet."
+
+msgid "Paynet rejected the refund: the amount is more than the paid amount, or the payment has already been refunded."
+msgstr "Paynet a respins rambursarea: suma depășește suma achitată sau plata a fost deja rambursată."
+
+msgid "Paynet did not find a paid payment for this order."
+msgstr "Paynet nu a găsit o plată achitată pentru această comandă."
+
+msgid "The payment was not completed. You can try again."
+msgstr "Plata nu a fost finalizată. Puteți încerca din nou."
+
+msgid "The payment was not completed. You can pay again."
+msgstr "Plata nu a fost finalizată. Puteți plăti din nou."

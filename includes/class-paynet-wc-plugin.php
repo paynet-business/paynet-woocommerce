@@ -37,6 +37,15 @@ final class Paynet_WC_Plugin {
 	private function __construct() {
 		add_action( 'before_woocommerce_init', array( $this, 'declare_compatibility' ) );
 		add_action( 'plugins_loaded', array( $this, 'init' ), 11 );
+		add_action( 'init', array( $this, 'load_textdomain' ), 0 );
+	}
+
+	/**
+	 * Translations bundled with the plugin (languages/). A language pack from translate.wordpress.org,
+	 * when it exists, is loaded first by WordPress and takes priority.
+	 */
+	public function load_textdomain() {
+		load_plugin_textdomain( 'paynet-for-woocommerce', false, dirname( plugin_basename( PAYNET_WC_FILE ) ) . '/languages' ); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- bundled RU/RO until language packs exist.
 	}
 
 	/**

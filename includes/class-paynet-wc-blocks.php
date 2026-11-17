@@ -75,6 +75,7 @@ final class Paynet_WC_Blocks extends AbstractPaymentMethodType {
 		return array(
 			'title'       => $this->get_setting( 'title' ),
 			'description' => $this->gateway ? $this->gateway->description : $this->get_setting( 'description' ),
+			'icons'       => $this->gateway ? $this->gateway->icons() : array(),
 			'supports'    => $this->gateway ? array_values( $this->gateway->supports ) : array( 'products' ),
 			// Saved cards of the logged-in customer (no CardLinkHash in the browser; ТЗ разд. 9б).
 			'cards'       => $this->gateway && is_user_logged_in() ? $this->gateway->cards()->list_for_checkout( get_current_user_id() ) : array(),

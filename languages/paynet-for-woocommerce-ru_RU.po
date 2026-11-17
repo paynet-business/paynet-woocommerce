@@ -1,0 +1,465 @@
+# Copyright (C) Paynet Services SRL
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Paynet for WooCommerce\n"
+"Report-Msgid-Bugs-To: https://github.com/paynet-business/paynet-woocommerce/issues\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ru_RU\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Domain: paynet-for-woocommerce\n"
+
+#. Plugin Name of the plugin
+msgid "Paynet for WooCommerce"
+msgstr "Paynet для WooCommerce"
+
+#. Plugin URI of the plugin
+msgid "https://docs.paynet.md/api/"
+msgstr "https://docs.paynet.md/api/"
+
+#. Description of the plugin
+msgid "Accept card, Apple Pay and Google Pay payments through the Paynet payment page (Paynet Ecom API)."
+msgstr "Приём оплаты картой, Apple Pay и Google Pay через страницу оплаты Paynet (Paynet Ecom API)."
+
+#. Author of the plugin
+msgid "Paynet Services SRL"
+msgstr "Paynet Services SRL"
+
+#. Author URI of the plugin
+msgid "https://paynet.md"
+msgstr "https://paynet.md"
+
+msgid "Paynet"
+msgstr "Paynet"
+
+msgid "Paid less than the order amount — check whether there was a discount"
+msgstr "Оплачено меньше суммы заказа — проверьте, была ли скидка"
+
+msgid "Amount mismatch — check manually"
+msgstr "Расхождение суммы — проверьте вручную"
+
+msgid "Paynet: all"
+msgstr "Paynet: все"
+
+msgid "Paid amount differs"
+msgstr "Сумма оплаты отличается"
+
+msgid "Card"
+msgstr "Карта"
+
+#. translators: %s: card label
+#, php-format
+msgid "Paynet: card %s saved for the customer."
+msgstr "Paynet: карта %s сохранена для покупателя."
+
+msgid "This card cannot be deleted."
+msgstr "Эту карту нельзя удалить."
+
+msgid "Could not delete the card, please try again later."
+msgstr "Не удалось удалить карту, попробуйте позже."
+
+msgid "The card was deleted."
+msgstr "Карта удалена."
+
+#. translators: %s: card label, e.g. "Visa •••• 4242"
+#, php-format
+msgid "Do you really want to delete the card %s?"
+msgstr "Вы действительно хотите удалить карту %s?"
+
+msgid "Yes"
+msgstr "Да"
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "New card"
+msgstr "Новая карта"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Card, Apple Pay and Google Pay payments through the Paynet payment page."
+msgstr "Оплата картой, Apple Pay и Google Pay через страницу оплаты Paynet."
+
+msgid "TEST MODE: no real money is charged."
+msgstr "ТЕСТОВЫЙ РЕЖИМ: реальные деньги не списываются."
+
+msgid "Enable"
+msgstr "Включить"
+
+msgid "Enable Paynet"
+msgstr "Включить Paynet"
+
+msgid "Title for customers"
+msgstr "Название для покупателя"
+
+msgid "Card, Apple Pay, Google Pay (Paynet)"
+msgstr "Карта, Apple Pay, Google Pay (Paynet)"
+
+msgid "Description"
+msgstr "Описание"
+
+msgid "You will be redirected to the secure Paynet payment page."
+msgstr "Вы перейдёте на защищённую страницу оплаты Paynet."
+
+msgid "Icons"
+msgstr "Значки"
+
+msgid "Shown next to the title at checkout. Show only the methods Paynet has enabled for your sale area."
+msgstr "Показываются рядом с названием при оформлении заказа. Оставьте только способы, которые Paynet включил для вашей торговой точки."
+
+msgid "Mode"
+msgstr "Режим"
+
+msgid "Test"
+msgstr "Тест"
+
+msgid "Live"
+msgstr "Боевой"
+
+msgid "Test credentials"
+msgstr "Тестовые доступы"
+
+msgid "API login"
+msgstr "API-логин"
+
+msgid "API password"
+msgstr "API-пароль"
+
+msgid "SaleArea"
+msgstr "SaleArea"
+
+msgid "One sale area — one website: order numbers and the notification address are tied to the sale area."
+msgstr "Одна торговая точка — один сайт: номера заказов и адрес уведомлений привязаны к торговой точке."
+
+msgid "Notification key"
+msgstr "Ключ уведомлений"
+
+msgid "Live credentials"
+msgstr "Боевые доступы"
+
+msgid "Connection"
+msgstr "Подключение"
+
+msgid "Notifications and options"
+msgstr "Уведомления и параметры"
+
+msgid "Callback URL"
+msgstr "Callback URL"
+
+msgid "Test order-number salt"
+msgstr "Соль тестовых номеров заказов"
+
+msgid "Payment window (minutes)"
+msgstr "Срок оплаты (минуты)"
+
+msgid "Not longer than WooCommerce \"Hold stock\" — the shorter value is used. Minimum 10 minutes (Paynet does not accept a shorter payment window)."
+msgstr "Не больше «Удерживать запас» WooCommerce — используется меньшее значение. Минимум 10 минут (более короткий срок Paynet не принимает)."
+
+msgid "Notification IP check"
+msgstr "Проверка IP уведомлений"
+
+msgid "Accept notifications only from Paynet IP addresses (turn off behind CDN or proxy)"
+msgstr "Принимать уведомления только с IP-адресов Paynet (выключите, если сайт за CDN или прокси)"
+
+msgid "Debug log"
+msgstr "Журнал отладки"
+
+msgid "Write a debug log (WooCommerce → Status → Logs). No personal data is logged."
+msgstr "Вести журнал отладки (WooCommerce → Статус → Журналы). Персональные данные не записываются."
+
+msgid "Saved cards"
+msgstr "Сохранённые карты"
+
+msgid "Let registered customers pay with saved cards. Enable only after Paynet turns on card saving for your sale area."
+msgstr "Разрешить зарегистрированным покупателям оплату сохранёнными картами. Включайте только после того, как Paynet включит сохранение карт для вашей торговой точки."
+
+msgid "Uninstall"
+msgstr "Удаление плагина"
+
+msgid "Delete plugin data when the plugin is deleted: settings and saved cards in WordPress (cards stay saved in Paynet). Orders are not changed."
+msgstr "Удалять данные плагина при его удалении: настройки и сохранённые карты в WordPress (в Paynet карты остаются). Заказы не изменяются."
+
+msgid "In test mode you do not need to send this address and notifications do not arrive — see the test mode notice above."
+msgstr "В тестовом режиме сообщать адрес не нужно и уведомления не приходят — см. подсказку тестового режима выше."
+
+msgid "Send this address to Paynet for your sale area — without it payment notifications are not sent."
+msgstr "Сообщите этот адрес в Paynet для вашей торговой точки — без него уведомления об оплате не приходят."
+
+msgid "Copy"
+msgstr "Скопировать"
+
+msgid "Regenerate"
+msgstr "Сгенерировать заново"
+
+msgid "Added to order numbers in test mode so they do not collide with other users of the shared test account."
+msgstr "Добавляется к номерам заказов в тестовом режиме, чтобы они не совпадали с номерами других пользователей общей тестовой учётки."
+
+msgid "Fill with test credentials"
+msgstr "Заполнить тестовыми доступами"
+
+msgid "Public credentials of the shared Paynet test account (docs.paynet.md). Click \"Save changes\" afterwards."
+msgstr "Публичные доступы общей тестовой учётки Paynet (docs.paynet.md). Затем нажмите «Сохранить изменения»."
+
+msgid "Check connection"
+msgstr "Проверить подключение"
+
+msgid "Signs in to the Paynet API of the selected mode with the login and password entered above (saving is not needed)."
+msgstr "Выполняет вход в API Paynet выбранного режима с логином и паролем, введёнными выше (сохранять не нужно)."
+
+msgid "Not allowed."
+msgstr "Недостаточно прав."
+
+msgid "Enter the API login and password."
+msgstr "Введите API-логин и пароль."
+
+msgid "Connected."
+msgstr "Подключено."
+
+#. translators: %s: error text
+#, php-format
+msgid "No answer from Paynet: %s"
+msgstr "Нет ответа от Paynet: %s"
+
+#. translators: 1: HTTP code, 2: Paynet error code, 3: error text
+#, php-format
+msgid "Error %1$d %2$s: %3$s"
+msgstr "Ошибка %1$d %2$s: %3$s"
+
+#. translators: %s: store currency
+#, php-format
+msgid "Paynet accepts MDL, USD and EUR. The store currency is %s, so Paynet is not shown to customers."
+msgstr "Paynet принимает MDL, USD и EUR. Валюта магазина — %s, поэтому Paynet не показывается покупателям."
+
+msgid "Only MDL is available in the Paynet test environment."
+msgstr "В тестовой среде Paynet доступна только MDL."
+
+msgid "Enter the API login, password and SaleArea of the selected mode: until then Paynet is not shown to customers."
+msgstr "Введите API-логин, пароль и SaleArea выбранного режима: до этого Paynet не показывается покупателям."
+
+msgid "TEST MODE"
+msgstr "ТЕСТОВЫЙ РЕЖИМ"
+
+msgid "The Paynet test account is shared by all developers. Therefore:"
+msgstr "Тестовая учётка Paynet общая для всех разработчиков. Поэтому:"
+
+msgid "Payment notifications do not reach your site."
+msgstr "Уведомления об оплате на ваш сайт не приходят."
+
+msgid "Paynet sends notifications to one address per sale area, and the test sale area is shared. The order status is updated when the customer returns to your site after payment and by a background check (after 2, 5, 15 and 30 minutes). In live mode notifications arrive once you send the Callback URL to Paynet for your sale area."
+msgstr "Paynet отправляет уведомления на один адрес для торговой точки, а тестовая точка общая. Статус заказа обновляется, когда покупатель возвращается на сайт после оплаты, и фоновой проверкой (через 2, 5, 15 и 30 минут). В боевом режиме уведомления начнут приходить, когда вы сообщите Callback URL в Paynet для своей торговой точки."
+
+msgid "A payment creation error may be caused by an order number collision"
+msgstr "Ошибка при создании платежа может быть вызвана совпадением номера заказа"
+
+msgid "with another user. The plugin adds a random salt to order numbers; if errors repeat, click \"Regenerate\"."
+msgstr "с другим пользователем. Плагин добавляет к номерам случайную соль; при повторяющихся ошибках нажмите «Сгенерировать заново»."
+
+msgid "Could not proceed to payment, please try again."
+msgstr "Не удалось перейти к оплате, попробуйте ещё раз."
+
+msgid "Order not found."
+msgstr "Заказ не найден."
+
+msgid "The payment is being processed. The order status will be updated automatically within a few minutes."
+msgstr "Оплата обрабатывается. Статус заказа обновится автоматически в течение нескольких минут."
+
+#. translators: 1: Paynet ExternalId, 2: amount in Paynet, 3: order total
+#, php-format
+msgid "Paynet: order of the old plugin (Order %1$s) is paid, but the amount in Paynet %2$s differs from the order total %3$s. Check manually."
+msgstr "Paynet: заказ старого плагина (Order %1$s) оплачен, но сумма в Paynet %2$s отличается от итога заказа %3$s. Проверьте вручную."
+
+#. translators: 1: Paynet payment ID, 2: Paynet ExternalId, 3: amount, method and card mask
+#, php-format
+msgid "Paynet: payment #%1$s of the old plugin order (Order %2$s) confirmed by the new plugin (%3$s)."
+msgstr "Paynet: платёж #%1$s по заказу старого плагина (Order %2$s) подтверждён новым плагином (%3$s)."
+
+#. translators: 1: paid amount, 2: order amount
+#, php-format
+msgid "Attention: the paid amount (%1$s) is less than the order amount (%2$s). Check whether there was a discount."
+msgstr "Внимание: сумма оплаты (%1$s) меньше суммы заказа (%2$s). Проверьте, была ли скидка."
+
+msgid "Paynet: paid after the order was cancelled — check that the goods are in stock."
+msgstr "Paynet: оплачено после отмены заказа — проверьте наличие товара."
+
+#. translators: %s: Paynet ExternalId
+#, php-format
+msgid "Paynet: notification or return for the old plugin order (Order %s) — the payment could not be checked through the new API. Check the payment manually in Paynet."
+msgstr "Paynet: уведомление или возврат покупателя по заказу старого плагина (Order %s) — оплату не удалось проверить через новый API. Проверьте оплату вручную в Paynet."
+
+msgid "Could not check the payment status. Please try again in a minute."
+msgstr "Не удалось проверить статус оплаты. Попробуйте через минуту."
+
+msgid "The payment is being processed. Please wait a few minutes before paying again."
+msgstr "Оплата обрабатывается. Подождите несколько минут, прежде чем оплачивать снова."
+
+msgid "Paynet: the limit of 999 payment attempts for this order is reached. Create a new order."
+msgstr "Paynet: достигнут предел в 999 попыток оплаты этого заказа. Создайте новый заказ."
+
+#. translators: %s: Paynet order number
+#, php-format
+msgid "Paynet: TECHNICAL_ERROR for Order %s in test mode, retrying with a new attempt number."
+msgstr "Paynet: TECHNICAL_ERROR для Order %s в тестовом режиме, повтор с новым номером попытки."
+
+msgid "Paynet: in the test environment this error may be caused by an order number that another user of the shared test account already used. Click \"Regenerate\" next to the test order-number salt in the plugin settings and try again."
+msgstr "Paynet: в тестовой среде ошибка может быть вызвана номером заказа, который уже использовал другой пользователь общей тестовой учётки. Нажмите «Сгенерировать заново» у соли тестовых номеров в настройках плагина и повторите."
+
+#. translators: 1: HTTP code, 2: Paynet error code, 3: trace ID, 4: error text
+#, php-format
+msgid "Paynet: payment was not created. HTTP %1$s, code %2$s, traceId %3$s. %4$s"
+msgstr "Paynet: платёж не создан. HTTP %1$s, код %2$s, traceId %3$s. %4$s"
+
+#. translators: 1: Paynet payment ID, 2: Paynet order number, 3: mode
+#, php-format
+msgid "Paynet payment #%1$s created, Order %2$s (%3$s mode)."
+msgstr "Создан платёж Paynet #%1$s, Order %2$s (режим: %3$s)."
+
+msgid "test"
+msgstr "тест"
+
+msgid "live"
+msgstr "боевой"
+
+#. translators: %s: order number
+#, php-format
+msgid "Order #%s"
+msgstr "Заказ №%s"
+
+msgid "Paynet: the payment was declined or cancelled (status 5). The customer can try again."
+msgstr "Paynet: оплата отклонена или отменена (статус 5). Покупатель может попробовать снова."
+
+msgid "Paynet: the payment window has expired, the order was not paid."
+msgstr "Paynet: срок оплаты истёк, заказ не оплачен."
+
+#. translators: 1: amount from Paynet, 2: order amount
+#, php-format
+msgid "order amount in Paynet %1$s ≠ order amount %2$s"
+msgstr "сумма заказа в Paynet %1$s ≠ сумме заказа %2$s"
+
+#. translators: 1: paid amount, 2: order amount
+#, php-format
+msgid "paid %1$s is more than the order amount %2$s"
+msgstr "оплачено %1$s — больше суммы заказа %2$s"
+
+msgid "payment ID differs from the created payment"
+msgstr "ID платежа отличается от созданного платежа"
+
+msgid "notification payment ID differs from the API"
+msgstr "ID платежа в уведомлении отличается от API"
+
+#. translators: 1: PaidAmount in the notification, 2: paid amount in the API
+#, php-format
+msgid "PaidAmount in the notification %1$s ≠ API %2$s"
+msgstr "PaidAmount в уведомлении %1$s ≠ API %2$s"
+
+msgid "Paynet: amount mismatch, check manually."
+msgstr "Paynet: расхождение суммы, проверьте вручную."
+
+#. translators: 1: Paynet payment ID, 2: amount, method and card mask
+#, php-format
+msgid "Paynet: payment #%1$s confirmed (%2$s)."
+msgstr "Paynet: платёж #%1$s подтверждён (%2$s)."
+
+#. translators: %s: order number
+#, php-format
+msgid "Paynet: check order #%s"
+msgstr "Paynet: проверьте заказ №%s"
+
+msgid "Paynet for WooCommerce requires 64-bit PHP."
+msgstr "Для Paynet для WooCommerce нужен 64-битный PHP."
+
+msgid "Plugin activation error"
+msgstr "Ошибка активации плагина"
+
+msgid "Settings"
+msgstr "Настройки"
+
+msgid "Paynet for WooCommerce requires WooCommerce to be installed and active."
+msgstr "Для Paynet для WooCommerce нужен установленный и включённый WooCommerce."
+
+#. translators: %s: minimum WooCommerce version
+#, php-format
+msgid "Paynet for WooCommerce requires WooCommerce %s or later."
+msgstr "Для Paynet для WooCommerce нужен WooCommerce %s или новее."
+
+msgid "The old \"Paynet Moldova Gateway\" plugin is active. Deactivate it: both plugins receive payment notifications at the same address."
+msgstr "Включён старый плагин «Paynet Moldova Gateway». Отключите его: оба плагина принимают уведомления об оплате по одному адресу."
+
+msgid "The refund response did not arrive; Paynet status confirms the refund."
+msgstr "Ответ на возврат не пришёл; статус в Paynet подтверждает возврат."
+
+msgid "Paynet: no response to the refund request and the status does not show a refund. The refund was not recorded — check the payment in the Paynet cabinet before trying again."
+msgstr "Paynet: нет ответа на запрос возврата, и статус не показывает возврат. Возврат не засчитан — проверьте платёж в кабинете Paynet, прежде чем повторять."
+
+msgid "Paynet did not respond, the refund result is unknown. Check the payment status in the Paynet cabinet before trying again."
+msgstr "Paynet не ответил, результат возврата неизвестен. Проверьте статус платежа в кабинете Paynet, прежде чем повторять."
+
+#. translators: 1: amount, 2: error text from Paynet
+#, php-format
+msgid "Paynet: refund of %1$s rejected — %2$s"
+msgstr "Paynet: возврат %1$s отклонён — %2$s"
+
+#. translators: 1: amount, 2: full or partial
+#, php-format
+msgid "Paynet: refund of %1$s done (%2$s)."
+msgstr "Paynet: возврат %1$s выполнен (%2$s)."
+
+msgid "full"
+msgstr "полный"
+
+msgid "partial"
+msgstr "частичный"
+
+#. translators: %s: refund reason
+#, php-format
+msgid "Reason: %s"
+msgstr "Причина: %s"
+
+#. translators: %s: order number
+#, php-format
+msgid "Refund for order %s"
+msgstr "Возврат по заказу %s"
+
+msgid "This order has no confirmed Paynet payment to refund."
+msgstr "У этого заказа нет подтверждённого платежа Paynet для возврата."
+
+msgid "Paynet allows one refund per order, and this order has already been refunded through Paynet. Refund the rest manually if needed."
+msgstr "Paynet допускает один возврат на заказ, а по этому заказу возврат через Paynet уже был. При необходимости верните остаток вручную."
+
+#. translators: %d: Paynet status
+#, php-format
+msgid "Paynet already shows a refund for this payment (status %d), for example made in the Paynet cabinet. Paynet allows one refund per order."
+msgstr "Paynet уже показывает возврат по этому платежу (статус %d), например сделанный в кабинете Paynet. Paynet допускает один возврат на заказ."
+
+msgid "Enter a refund amount greater than zero."
+msgstr "Введите сумму возврата больше нуля."
+
+#. translators: 1: refund amount, 2: paid amount
+#, php-format
+msgid "The refund amount %1$s is more than the amount paid through Paynet (%2$s)."
+msgstr "Сумма возврата %1$s больше суммы, оплаченной через Paynet (%2$s)."
+
+#. translators: %s: payment date
+#, php-format
+msgid "Paynet accepts refunds within 180 days of payment. This order was paid on %s."
+msgstr "Paynet принимает возвраты в течение 180 дней после оплаты. Этот заказ оплачен %s."
+
+msgid "Paynet does not refund payments made by invoice (CASH_INVOICE). Return the money to the customer another way and refund manually."
+msgstr "Paynet не делает возвраты по оплатам счётом (CASH_INVOICE). Верните деньги покупателю другим способом и оформите возврат вручную."
+
+msgid "The refund cannot be made through Paynet."
+msgstr "Возврат через Paynet невозможен."
+
+msgid "Paynet rejected the refund: the amount is more than the paid amount, or the payment has already been refunded."
+msgstr "Paynet отклонил возврат: сумма больше оплаченной или возврат по платежу уже был."
+
+msgid "Paynet did not find a paid payment for this order."
+msgstr "Paynet не нашёл оплаченный платёж по этому заказу."
+
+msgid "The payment was not completed. You can try again."
+msgstr "Оплата не завершена. Вы можете попробовать снова."
+
+msgid "The payment was not completed. You can pay again."
+msgstr "Оплата не завершена. Вы можете оплатить снова."

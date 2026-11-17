@@ -114,7 +114,13 @@
 		);
 	};
 	var Label = function () {
-		return el( 'span', null, title );
+		var icons = ( data.icons || [] ).map( function ( i ) {
+			return el( 'img', { key: i.id, className: 'paynet-wc-icon paynet-wc-icon-' + i.id, src: i.url, alt: i.label } );
+		} );
+		return el( 'span', { className: 'paynet-wc-label' },
+			el( 'span', null, title ),
+			icons.length ? el( 'span', { className: 'paynet-wc-icons' }, icons ) : null
+		);
 	};
 
 	registry.registerPaymentMethod( {

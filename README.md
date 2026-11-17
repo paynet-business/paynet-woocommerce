@@ -2,7 +2,7 @@
 
 WooCommerce payment gateway for the Paynet Ecom API (card, Apple Pay, Google Pay via the Paynet payment page).
 
-Status: **stage 2 — skeleton**. Settings and test-mode notice are in place; the payment flow arrives in stage 3, so the gateway is not shown to customers yet.
+Status: **stage 6 — release candidate 1.0.0** (payments, refunds, saved cards, switching from the old plugin, EN/RU/RO). Description for WordPress.org: `readme.txt`.
 
 ## Try it without installing anything
 
@@ -20,6 +20,18 @@ GitHub → **Actions** → latest run of **CI**:
 ```bash
 composer install && vendor/bin/phpunit          # unit tests
 cd e2e && npm install && npx wp-env start --config ../.wp-env.json && npx playwright test
+```
+
+### Translations
+
+Source strings are English. Russian and Romanian are bundled in `languages/` (a language pack from translate.wordpress.org takes priority once it exists). No WP-CLI needed:
+
+```bash
+php tools/i18n.php pot     # refresh languages/paynet-for-woocommerce.pot from the code
+php tools/i18n.php po      # add new strings to the .po files (empty), drop obsolete ones
+# translate the empty msgstr in languages/*.po (any text editor or Poedit)
+php tools/i18n.php mo      # compile .mo
+php tools/i18n.php check   # what CI runs: everything translated, placeholders match, files up to date
 ```
 
 Documentation: https://docs.paynet.md/api/ · License: GPLv2 or later

@@ -1,0 +1,590 @@
+# Copyright (C) Paynet Services SRL
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Paynet for WooCommerce\n"
+"Report-Msgid-Bugs-To: https://github.com/paynet-business/paynet-woocommerce/issues\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: paynet-for-woocommerce\n"
+
+#. Plugin Name of the plugin
+msgid "Paynet for WooCommerce"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://docs.paynet.md/api/"
+msgstr ""
+
+#. Description of the plugin
+msgid "Accept card, Apple Pay and Google Pay payments through the Paynet payment page (Paynet Ecom API)."
+msgstr ""
+
+#. Author of the plugin
+msgid "Paynet Services SRL"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://paynet.md"
+msgstr ""
+
+#: includes/class-paynet-wc-admin.php:43 includes/class-paynet-wc-gateway.php:65
+msgid "Paynet"
+msgstr ""
+
+#: includes/class-paynet-wc-admin.php:85
+msgid "Paid less than the order amount — check whether there was a discount"
+msgstr ""
+
+#: includes/class-paynet-wc-admin.php:86
+msgid "Amount mismatch — check manually"
+msgstr ""
+
+#: includes/class-paynet-wc-admin.php:104
+msgid "Paynet: all"
+msgstr ""
+
+#: includes/class-paynet-wc-admin.php:104
+msgid "Paid amount differs"
+msgstr ""
+
+#: includes/class-paynet-wc-cards.php:204
+msgid "Card"
+msgstr ""
+
+#. translators: %s: card label
+#: includes/class-paynet-wc-cards.php:329
+#, php-format
+msgid "Paynet: card %s saved for the customer."
+msgstr ""
+
+#: includes/class-paynet-wc-cards.php:380
+msgid "This card cannot be deleted."
+msgstr ""
+
+#: includes/class-paynet-wc-cards.php:383 includes/class-paynet-wc-cards.php:434 includes/class-paynet-wc-cards.php:487
+msgid "Could not delete the card, please try again later."
+msgstr ""
+
+#: includes/class-paynet-wc-cards.php:432
+msgid "The card was deleted."
+msgstr ""
+
+#. translators: %s: card label, e.g. "Visa •••• 4242"
+#: includes/class-paynet-wc-cards.php:484
+#, php-format
+msgid "Do you really want to delete the card %s?"
+msgstr ""
+
+#: includes/class-paynet-wc-cards.php:485
+msgid "Yes"
+msgstr ""
+
+#: includes/class-paynet-wc-cards.php:486
+msgid "Cancel"
+msgstr ""
+
+#: includes/class-paynet-wc-cards.php:488 includes/class-paynet-wc-cards.php:518
+msgid "New card"
+msgstr ""
+
+#: includes/class-paynet-wc-cards.php:489 includes/class-paynet-wc-cards.php:512
+msgid "Delete"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:66
+msgid "Card, Apple Pay and Google Pay payments through the Paynet payment page."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:80
+msgid "TEST MODE: no real money is charged."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:271
+msgid "Enable"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:273
+msgid "Enable Paynet"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:277
+msgid "Title for customers"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:279
+msgid "Card, Apple Pay, Google Pay (Paynet)"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:282
+msgid "Description"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:284
+msgid "You will be redirected to the secure Paynet payment page."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:287
+msgid "Icons"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:292
+msgid "Shown next to the title at checkout. Show only the methods Paynet has enabled for your sale area."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:295
+msgid "Mode"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:298
+msgid "Test"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:299
+msgid "Live"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:304
+msgid "Test credentials"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:312 includes/class-paynet-wc-gateway.php:333
+msgid "API login"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:316 includes/class-paynet-wc-gateway.php:337
+msgid "API password"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:320 includes/class-paynet-wc-gateway.php:341
+msgid "SaleArea"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:322 includes/class-paynet-wc-gateway.php:343
+msgid "One sale area — one website: order numbers and the notification address are tied to the sale area."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:325 includes/class-paynet-wc-gateway.php:346
+msgid "Notification key"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:329
+msgid "Live credentials"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:350
+msgid "Connection"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:354
+msgid "Notifications and options"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:358
+msgid "Callback URL"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:362
+msgid "Test order-number salt"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:366
+msgid "Payment window (minutes)"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:373
+msgid "Not longer than WooCommerce \"Hold stock\" — the shorter value is used. Minimum 10 minutes (Paynet does not accept a shorter payment window)."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:376
+msgid "Notification IP check"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:378
+msgid "Accept notifications only from Paynet IP addresses (turn off behind CDN or proxy)"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:382
+msgid "Debug log"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:384
+msgid "Write a debug log (WooCommerce → Status → Logs). No personal data is logged."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:388
+msgid "Saved cards"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:390
+msgid "Let registered customers pay with saved cards. Enable only after Paynet turns on card saving for your sale area."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:394
+msgid "Uninstall"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:396
+msgid "Delete plugin data when the plugin is deleted: settings and saved cards in WordPress (cards stay saved in Paynet). Orders are not changed."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:412
+msgid "In test mode you do not need to send this address and notifications do not arrive — see the test mode notice above."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:413
+msgid "Send this address to Paynet for your sale area — without it payment notifications are not sent."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:421
+msgid "Copy"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:447
+msgid "Regenerate"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:448
+msgid "Added to order numbers in test mode so they do not collide with other users of the shared test account."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:468
+msgid "Fill with test credentials"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:469
+msgid "Public credentials of the shared Paynet test account (docs.paynet.md). Click \"Save changes\" afterwards."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:489
+msgid "Check connection"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:491
+msgid "Signs in to the Paynet API of the selected mode with the login and password entered above (saving is not needed)."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:504
+msgid "Not allowed."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:510
+msgid "Enter the API login and password."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:515
+msgid "Connected."
+msgstr ""
+
+#. translators: %s: error text
+#: includes/class-paynet-wc-gateway.php:519
+#, php-format
+msgid "No answer from Paynet: %s"
+msgstr ""
+
+#. translators: 1: HTTP code, 2: Paynet error code, 3: error text
+#: includes/class-paynet-wc-gateway.php:522
+#, php-format
+msgid "Error %1$d %2$s: %3$s"
+msgstr ""
+
+#. translators: %s: store currency
+#: includes/class-paynet-wc-gateway.php:599
+#, php-format
+msgid "Paynet accepts MDL, USD and EUR. The store currency is %s, so Paynet is not shown to customers."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:601
+msgid "Only MDL is available in the Paynet test environment."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:604
+msgid "Enter the API login, password and SaleArea of the selected mode: until then Paynet is not shown to customers."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:607
+msgid "TEST MODE"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:608
+msgid "The Paynet test account is shared by all developers. Therefore:"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:609
+msgid "Payment notifications do not reach your site."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:609
+msgid "Paynet sends notifications to one address per sale area, and the test sale area is shared. The order status is updated when the customer returns to your site after payment and by a background check (after 2, 5, 15 and 30 minutes). In live mode notifications arrive once you send the Callback URL to Paynet for your sale area."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:610
+msgid "A payment creation error may be caused by an order number collision"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:610
+msgid "with another user. The plugin adds a random salt to order numbers; if errors repeat, click \"Regenerate\"."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:665 includes/class-paynet-wc-payment.php:223
+msgid "Could not proceed to payment, please try again."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:680
+msgid "Order not found."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:698
+msgid "The payment is being processed. The order status will be updated automatically within a few minutes."
+msgstr ""
+
+#. translators: 1: Paynet ExternalId, 2: amount in Paynet, 3: order total
+#: includes/class-paynet-wc-legacy.php:177
+#, php-format
+msgid "Paynet: order of the old plugin (Order %1$s) is paid, but the amount in Paynet %2$s differs from the order total %3$s. Check manually."
+msgstr ""
+
+#. translators: 1: Paynet payment ID, 2: Paynet ExternalId, 3: amount, method and card mask
+#: includes/class-paynet-wc-legacy.php:200
+#, php-format
+msgid "Paynet: payment #%1$s of the old plugin order (Order %2$s) confirmed by the new plugin (%3$s)."
+msgstr ""
+
+#. translators: 1: paid amount, 2: order amount
+#: includes/class-paynet-wc-legacy.php:213 includes/class-paynet-wc-payment.php:516
+#, php-format
+msgid "Attention: the paid amount (%1$s) is less than the order amount (%2$s). Check whether there was a discount."
+msgstr ""
+
+#: includes/class-paynet-wc-legacy.php:221 includes/class-paynet-wc-payment.php:524
+msgid "Paynet: paid after the order was cancelled — check that the goods are in stock."
+msgstr ""
+
+#. translators: %s: Paynet ExternalId
+#: includes/class-paynet-wc-legacy.php:244
+#, php-format
+msgid "Paynet: notification or return for the old plugin order (Order %s) — the payment could not be checked through the new API. Check the payment manually in Paynet."
+msgstr ""
+
+#: includes/class-paynet-wc-payment.php:134
+msgid "Could not check the payment status. Please try again in a minute."
+msgstr ""
+
+#: includes/class-paynet-wc-payment.php:143
+msgid "The payment is being processed. Please wait a few minutes before paying again."
+msgstr ""
+
+#: includes/class-paynet-wc-payment.php:168
+msgid "Paynet: the limit of 999 payment attempts for this order is reached. Create a new order."
+msgstr ""
+
+#. translators: %s: Paynet order number
+#: includes/class-paynet-wc-payment.php:197
+#, php-format
+msgid "Paynet: TECHNICAL_ERROR for Order %s in test mode, retrying with a new attempt number."
+msgstr ""
+
+#: includes/class-paynet-wc-payment.php:200
+msgid "Paynet: in the test environment this error may be caused by an order number that another user of the shared test account already used. Click \"Regenerate\" next to the test order-number salt in the plugin settings and try again."
+msgstr ""
+
+#. translators: 1: HTTP code, 2: Paynet error code, 3: trace ID, 4: error text
+#: includes/class-paynet-wc-payment.php:207
+#, php-format
+msgid "Paynet: payment was not created. HTTP %1$s, code %2$s, traceId %3$s. %4$s"
+msgstr ""
+
+#. translators: 1: Paynet payment ID, 2: Paynet order number, 3: mode
+#: includes/class-paynet-wc-payment.php:253
+#, php-format
+msgid "Paynet payment #%1$s created, Order %2$s (%3$s mode)."
+msgstr ""
+
+#: includes/class-paynet-wc-payment.php:256
+msgid "test"
+msgstr ""
+
+#: includes/class-paynet-wc-payment.php:256
+msgid "live"
+msgstr ""
+
+#. translators: %s: order number
+#: includes/class-paynet-wc-payment.php:295
+#, php-format
+msgid "Order #%s"
+msgstr ""
+
+#: includes/class-paynet-wc-payment.php:397
+msgid "Paynet: the payment was declined or cancelled (status 5). The customer can try again."
+msgstr ""
+
+#: includes/class-paynet-wc-payment.php:403
+msgid "Paynet: the payment window has expired, the order was not paid."
+msgstr ""
+
+#. translators: 1: amount from Paynet, 2: order amount
+#: includes/class-paynet-wc-payment.php:434
+#, php-format
+msgid "order amount in Paynet %1$s ≠ order amount %2$s"
+msgstr ""
+
+#. translators: 1: paid amount, 2: order amount
+#: includes/class-paynet-wc-payment.php:442
+#, php-format
+msgid "paid %1$s is more than the order amount %2$s"
+msgstr ""
+
+#: includes/class-paynet-wc-payment.php:448
+msgid "payment ID differs from the created payment"
+msgstr ""
+
+#: includes/class-paynet-wc-payment.php:452
+msgid "notification payment ID differs from the API"
+msgstr ""
+
+#. translators: 1: PaidAmount in the notification, 2: paid amount in the API
+#: includes/class-paynet-wc-payment.php:457
+#, php-format
+msgid "PaidAmount in the notification %1$s ≠ API %2$s"
+msgstr ""
+
+#: includes/class-paynet-wc-payment.php:480
+msgid "Paynet: amount mismatch, check manually."
+msgstr ""
+
+#. translators: 1: Paynet payment ID, 2: amount, method and card mask
+#: includes/class-paynet-wc-payment.php:505
+#, php-format
+msgid "Paynet: payment #%1$s confirmed (%2$s)."
+msgstr ""
+
+#. translators: %s: order number
+#: includes/class-paynet-wc-payment.php:553
+#, php-format
+msgid "Paynet: check order #%s"
+msgstr ""
+
+#: includes/class-paynet-wc-plugin.php:58
+msgid "Paynet for WooCommerce requires 64-bit PHP."
+msgstr ""
+
+#: includes/class-paynet-wc-plugin.php:59
+msgid "Plugin activation error"
+msgstr ""
+
+#: includes/class-paynet-wc-plugin.php:183
+msgid "Settings"
+msgstr ""
+
+#: includes/class-paynet-wc-plugin.php:191
+msgid "Paynet for WooCommerce requires WooCommerce to be installed and active."
+msgstr ""
+
+#. translators: %s: minimum WooCommerce version
+#: includes/class-paynet-wc-plugin.php:199
+#, php-format
+msgid "Paynet for WooCommerce requires WooCommerce %s or later."
+msgstr ""
+
+#: includes/class-paynet-wc-plugin.php:213
+msgid "The old \"Paynet Moldova Gateway\" plugin is active. Deactivate it: both plugins receive payment notifications at the same address."
+msgstr ""
+
+#: includes/class-paynet-wc-refund.php:110
+msgid "The refund response did not arrive; Paynet status confirms the refund."
+msgstr ""
+
+#: includes/class-paynet-wc-refund.php:114
+msgid "Paynet: no response to the refund request and the status does not show a refund. The refund was not recorded — check the payment in the Paynet cabinet before trying again."
+msgstr ""
+
+#: includes/class-paynet-wc-refund.php:116
+msgid "Paynet did not respond, the refund result is unknown. Check the payment status in the Paynet cabinet before trying again."
+msgstr ""
+
+#. translators: 1: amount, 2: error text from Paynet
+#: includes/class-paynet-wc-refund.php:123
+#, php-format
+msgid "Paynet: refund of %1$s rejected — %2$s"
+msgstr ""
+
+#. translators: 1: amount, 2: full or partial
+#: includes/class-paynet-wc-refund.php:152
+#, php-format
+msgid "Paynet: refund of %1$s done (%2$s)."
+msgstr ""
+
+#: includes/class-paynet-wc-refund.php:154
+msgid "full"
+msgstr ""
+
+#: includes/class-paynet-wc-refund.php:154
+msgid "partial"
+msgstr ""
+
+#. translators: %s: refund reason
+#: includes/class-paynet-wc-refund.php:158
+#, php-format
+msgid "Reason: %s"
+msgstr ""
+
+#. translators: %s: order number
+#: includes/class-paynet-wc-refund.php:177
+#, php-format
+msgid "Refund for order %s"
+msgstr ""
+
+#: includes/class-paynet-wc-refund.php:196
+msgid "This order has no confirmed Paynet payment to refund."
+msgstr ""
+
+#: includes/class-paynet-wc-refund.php:198
+msgid "Paynet allows one refund per order, and this order has already been refunded through Paynet. Refund the rest manually if needed."
+msgstr ""
+
+#. translators: %d: Paynet status
+#: includes/class-paynet-wc-refund.php:202
+#, php-format
+msgid "Paynet already shows a refund for this payment (status %d), for example made in the Paynet cabinet. Paynet allows one refund per order."
+msgstr ""
+
+#: includes/class-paynet-wc-refund.php:206
+msgid "Enter a refund amount greater than zero."
+msgstr ""
+
+#. translators: 1: refund amount, 2: paid amount
+#: includes/class-paynet-wc-refund.php:210
+#, php-format
+msgid "The refund amount %1$s is more than the amount paid through Paynet (%2$s)."
+msgstr ""
+
+#. translators: %s: payment date
+#: includes/class-paynet-wc-refund.php:217
+#, php-format
+msgid "Paynet accepts refunds within 180 days of payment. This order was paid on %s."
+msgstr ""
+
+#: includes/class-paynet-wc-refund.php:221
+msgid "Paynet does not refund payments made by invoice (CASH_INVOICE). Return the money to the customer another way and refund manually."
+msgstr ""
+
+#: includes/class-paynet-wc-refund.php:223
+msgid "The refund cannot be made through Paynet."
+msgstr ""
+
+#: includes/class-paynet-wc-refund.php:236
+msgid "Paynet rejected the refund: the amount is more than the paid amount, or the payment has already been refunded."
+msgstr ""
+
+#: includes/class-paynet-wc-refund.php:238
+msgid "Paynet did not find a paid payment for this order."
+msgstr ""
+
+#: includes/class-paynet-wc-webhook.php:164
+msgid "The payment was not completed. You can try again."
+msgstr ""
+
+#: includes/class-paynet-wc-webhook.php:169
+msgid "The payment was not completed. You can pay again."
+msgstr ""

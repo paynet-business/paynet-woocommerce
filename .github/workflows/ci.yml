@@ -31,6 +31,8 @@ jobs:
       - name: Syntax check
         run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
       - run: composer install --no-interaction --no-progress
+      - name: Translations (.pot / .po / .mo up to date, RU and RO complete)
+        run: php tools/i18n.php check
       - name: PHPUnit
         run: vendor/bin/phpunit --testdox --log-junit junit.xml
       - name: Report
@@ -67,7 +69,7 @@ jobs:
       matrix:
         hpos: ['on', 'off']
     env:
-      STAGE: '5'
+      STAGE: '6'
       HPOS: ${{ matrix.hpos }}
     defaults:
       run:
@@ -92,7 +94,11 @@ jobs:
           e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_coming_soon no
           e2e/node_modules/.bin/wp-env run cli wp option update woocommerce_onboarding_profile '{"skipped":true}' --format=json
           # HPOS on/off is set by the E2E setup (after WooCommerce finishes installing on the first web request).
+          # Core and WooCommerce in Russian / Romanian for the language checks (stage 6); English stays the site default.
+          e2e/node_modules/.bin/wp-env run cli wp language core install ru_RU ro_RO || true
+          e2e/node_modules/.bin/wp-env run cli wp language plugin install woocommerce ru_RU ro_RO || true
           e2e/node_modules/.bin/wp-env run cli wp plugin list --fields=name,version,status
+          e2e/node_modules/.bin/wp-env run cli wp core version
         env:
           WP_ENV_HOME: ${{ runner.temp }}/wp-env
       - name: Playwright
@@ -113,6 +119,13 @@ jobs:
           name: video-stage-${{ env.STAGE }}
           path: e2e/results/video-stage-${{ env.STAGE }}.mp4
           retention-days: 90
+      - uses: actions/upload-artifact@v4
+        if: always() && matrix.hpos == 'on'
+        with:
+          name: wporg-screenshots
+          path: e2e/results/wporg
+          retention-days: 90
+          if-no-files-found: ignore
       - uses: actions/upload-artifact@v4
         if: failure() || steps.pw.outcome == 'failure'
         with:
