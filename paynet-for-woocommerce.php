@@ -14,7 +14,7 @@
  * Text Domain:          paynet-for-woocommerce
  * Domain Path:          /languages
  * WC requires at least: 8.0
- * WC tested up to:      9.9
+ * WC tested up to:      11.3
  *
  * @package Paynet_WC
  */

@@ -73,8 +73,15 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 			$this->supports[] = 'tokenization'; // Shows "My account → Payment methods" (ТЗ разд. 9б).
 		}
 
+		// A title / description left at the English default follows the site language ([Пр6-6]).
 		$this->title       = $this->get_option( 'title' );
 		$this->description = $this->get_option( 'description' );
+		if ( 'Card, Apple Pay, Google Pay (Paynet)' === $this->title ) {
+			$this->title = __( 'Card, Apple Pay, Google Pay (Paynet)', 'paynet-for-woocommerce' );
+		}
+		if ( 'You will be redirected to the secure Paynet payment page.' === $this->description ) {
+			$this->description = __( 'You will be redirected to the secure Paynet payment page.', 'paynet-for-woocommerce' );
+		}
 		$this->enabled     = $this->get_option( 'enabled' );
 		if ( $this->is_test_mode() ) {
 			$this->description = trim( __( 'TEST MODE: no real money is charged.', 'paynet-for-woocommerce' ) . ' ' . $this->description );
@@ -177,13 +184,14 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 	/**
 	 * Icons selected in the settings whose image is available: [ [ 'id', 'label', 'url' ] ].
 	 *
-	 * Image sources, first found: the plugin (assets/images/{id}.svg — official marks supplied by Paynet),
-	 * then WooCommerce's own card icons (Visa, Mastercard). Filter `paynet_wc_icon_url` sets any other URL.
+	 * Image sources, first found: the plugin (assets/images/{id}.svg — if Paynet supplies its own files), then the icons
+	 * WooCommerce ships (assets/images/payment-methods/ — all four in WooCommerce 11.x; older versions —
+	 * credit-cards/ for Visa and Mastercard). Filter `paynet_wc_icon_url` sets any other URL.
 	 *
 	 * @return array[]
 	 */
 	public function icons() {
-		$selected = $this->get_option( 'icons', array_keys( self::ICONS ) );
+		$selected = $this->get_option( 'icons' ); // Unset → default (all); none selected → ''.
 		$out      = array();
 		foreach ( (array) $selected as $id ) {
 			if ( ! isset( self::ICONS[ $id ] ) ) {
@@ -192,10 +200,12 @@ class Paynet_WC_Gateway extends WC_Payment_Gateway {
 			$url = '';
 			if ( is_readable( PAYNET_WC_DIR . 'assets/images/' . $id . '.svg' ) ) {
 				$url = PAYNET_WC_URL . 'assets/images/' . $id . '.svg';
-			} elseif ( in_array( $id, array( 'visa', 'mastercard' ), true ) && function_exists( 'WC' ) ) {
-				$rel = 'assets/images/icons/credit-cards/' . $id . '.svg';
-				if ( is_readable( WC()->plugin_path() . '/' . $rel ) ) {
-					$url = WC()->plugin_url() . '/' . $rel;
+			} elseif ( function_exists( 'WC' ) ) {
+				foreach ( array( 'assets/images/payment-methods/' . $id . '.svg', 'assets/images/icons/credit-cards/' . $id . '.svg' ) as $rel ) {
+					if ( is_readable( WC()->plugin_path() . '/' . $rel ) ) {
+						$url = WC()->plugin_url() . '/' . $rel;
+						break;
+					}
 				}
 			}
 			$url = (string) apply_filters( 'paynet_wc_icon_url', $url, $id );

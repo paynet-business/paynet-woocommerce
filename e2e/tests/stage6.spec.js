@@ -29,6 +29,8 @@ const BASE = () => ( {
 	saved_cards: 'yes',
 	icons: [ 'visa', 'mastercard', 'applepay', 'googlepay' ],
 	delete_on_uninstall: 'no',
+	title: 'Card, Apple Pay, Google Pay (Paynet)',
+	description: 'You will be redirected to the secure Paynet payment page.',
 } );
 
 test.beforeEach( async ( { request } ) => {
@@ -46,14 +48,14 @@ const LANGS = [
 		n: 1, locale: 'ru_RU', name: 'Russian',
 		settings: [ 'Включить Paynet', 'ТЕСТОВЫЙ РЕЖИМ', 'Проверить подключение', 'Удалять данные плагина при его удалении' ],
 		title: 'Карта, Apple Pay, Google Pay (Paynet)',
-		description: 'ТЕСТОВЫЙ РЕЖИМ: реальные деньги не списываются.',
+		description: 'ТЕСТОВЫЙ РЕЖИМ: реальные деньги не списываются. Вы перейдёте на защищённую страницу оплаты Paynet.',
 		note: /Создан платёж Paynet #\d+, Order \d+ \(режим: тест\)/,
 	},
 	{
 		n: 2, locale: 'ro_RO', name: 'Romanian',
 		settings: [ 'Activează Paynet', 'MOD DE TEST', 'Verifică conexiunea', 'Șterge datele modulului la ștergerea lui' ],
 		title: 'Card, Apple Pay, Google Pay (Paynet)',
-		description: 'MOD DE TEST: nu se percep bani reali.',
+		description: 'MOD DE TEST: nu se percep bani reali. Veți fi redirecționat către pagina securizată de plată Paynet.',
 		note: /Plata Paynet #\d+ a fost creată, Order \d+ \(mod: test\)/,
 	},
 ];
@@ -61,7 +63,8 @@ const LANGS = [
 for ( const L of LANGS ) {
 	test( `S6-${ L.n } ${ L.name } site language: settings, checkout and order notes`, async ( { page, request } ) => {
 		test.setTimeout( 180000 );
-		await h.setOptions( request, { WPLANG: L.locale } );
+		// Title / description left at the English defaults follow the site language ([Пр6-6]).
+		await h.setOptions( request, { WPLANG: L.locale, paynet_wc_settings: { title: 'Card, Apple Pay, Google Pay (Paynet)', description: 'You will be redirected to the secure Paynet payment page.' } } );
 
 		await page.goto( SETTINGS );
 		for ( const text of L.settings ) {
@@ -82,6 +85,12 @@ for ( const L of LANGS ) {
 		await page.waitForURL( /paynet\.md/, { timeout: 60000 } );
 		const o = await h.order( request, await h.latestOrder( request ) );
 		expect( o.notes.join( '\n' ) ).toMatch( L.note );
+
+		// A title the merchant changed stays as entered.
+		await h.setOptions( request, { paynet_wc_settings: { title: 'Plată online (Paynet)' } } );
+		await page.goto( '/?page_id=' + ids.classic_checkout );
+		await h.waitUnblocked( page );
+		await expect( page.locator( 'li.payment_method_paynet_wc' ) ).toContainText( 'Plată online (Paynet)' );
 	} );
 }
 
@@ -103,7 +112,7 @@ test( 'S6-3 Payment method icons: classic and Blocks, selection in the settings'
 		const classic = guest.locator( 'li.payment_method_paynet_wc img.paynet-wc-icon' );
 		await expect( classic.first() ).toBeVisible();
 		const c = await loaded( classic );
-		expect( c.map( ( i ) => i.alt ) ).toEqual( expect.arrayContaining( [ 'Visa', 'Mastercard' ] ) );
+		expect( c.map( ( i ) => i.alt ) ).toEqual( [ 'Visa', 'Mastercard', 'Apple Pay', 'Google Pay' ] );
 		expect( c.every( ( i ) => i.ok ), JSON.stringify( c ) ).toBeTruthy();
 		await guest.locator( '#payment_method_paynet_wc' ).check().catch( () => {} );
 		await shot( guest, 2, guest.locator( '#payment' ) );

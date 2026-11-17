@@ -73,7 +73,7 @@ final class Paynet_WC_Blocks extends AbstractPaymentMethodType {
 	 */
 	public function get_payment_method_data() {
 		return array(
-			'title'       => $this->get_setting( 'title' ),
+			'title'       => $this->gateway ? $this->gateway->title : $this->get_setting( 'title' ),
 			'description' => $this->gateway ? $this->gateway->description : $this->get_setting( 'description' ),
 			'icons'       => $this->gateway ? $this->gateway->icons() : array(),
 			'supports'    => $this->gateway ? array_values( $this->gateway->supports ) : array( 'products' ),

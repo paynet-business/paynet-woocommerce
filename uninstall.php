@@ -13,7 +13,7 @@
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 if ( function_exists( 'as_unschedule_all_actions' ) ) {
-	as_unschedule_all_actions( 'paynet_wc_check_payment', array(), 'paynet-for-woocommerce' );
+	as_unschedule_all_actions( 'paynet_wc_check_payment' ); // By hook only: with a group and empty args nothing matches.
 }
 
 $paynet_wc_settings = get_option( 'woocommerce_paynet_wc_settings', array() );

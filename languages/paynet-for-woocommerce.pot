@@ -97,245 +97,245 @@ msgstr ""
 msgid "Card, Apple Pay and Google Pay payments through the Paynet payment page."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:80
-msgid "TEST MODE: no real money is charged."
-msgstr ""
-
-#: includes/class-paynet-wc-gateway.php:271
-msgid "Enable"
-msgstr ""
-
-#: includes/class-paynet-wc-gateway.php:273
-msgid "Enable Paynet"
-msgstr ""
-
-#: includes/class-paynet-wc-gateway.php:277
-msgid "Title for customers"
-msgstr ""
-
-#: includes/class-paynet-wc-gateway.php:279
+#: includes/class-paynet-wc-gateway.php:80 includes/class-paynet-wc-gateway.php:289
 msgid "Card, Apple Pay, Google Pay (Paynet)"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:282
-msgid "Description"
-msgstr ""
-
-#: includes/class-paynet-wc-gateway.php:284
+#: includes/class-paynet-wc-gateway.php:83 includes/class-paynet-wc-gateway.php:294
 msgid "You will be redirected to the secure Paynet payment page."
 msgstr ""
 
+#: includes/class-paynet-wc-gateway.php:87
+msgid "TEST MODE: no real money is charged."
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:281
+msgid "Enable"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:283
+msgid "Enable Paynet"
+msgstr ""
+
 #: includes/class-paynet-wc-gateway.php:287
-msgid "Icons"
+msgid "Title for customers"
 msgstr ""
 
 #: includes/class-paynet-wc-gateway.php:292
+msgid "Description"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:297
+msgid "Icons"
+msgstr ""
+
+#: includes/class-paynet-wc-gateway.php:302
 msgid "Shown next to the title at checkout. Show only the methods Paynet has enabled for your sale area."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:295
+#: includes/class-paynet-wc-gateway.php:305
 msgid "Mode"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:298
+#: includes/class-paynet-wc-gateway.php:308
 msgid "Test"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:299
+#: includes/class-paynet-wc-gateway.php:309
 msgid "Live"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:304
+#: includes/class-paynet-wc-gateway.php:314
 msgid "Test credentials"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:312 includes/class-paynet-wc-gateway.php:333
+#: includes/class-paynet-wc-gateway.php:322 includes/class-paynet-wc-gateway.php:343
 msgid "API login"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:316 includes/class-paynet-wc-gateway.php:337
+#: includes/class-paynet-wc-gateway.php:326 includes/class-paynet-wc-gateway.php:347
 msgid "API password"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:320 includes/class-paynet-wc-gateway.php:341
+#: includes/class-paynet-wc-gateway.php:330 includes/class-paynet-wc-gateway.php:351
 msgid "SaleArea"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:322 includes/class-paynet-wc-gateway.php:343
+#: includes/class-paynet-wc-gateway.php:332 includes/class-paynet-wc-gateway.php:353
 msgid "One sale area — one website: order numbers and the notification address are tied to the sale area."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:325 includes/class-paynet-wc-gateway.php:346
+#: includes/class-paynet-wc-gateway.php:335 includes/class-paynet-wc-gateway.php:356
 msgid "Notification key"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:329
+#: includes/class-paynet-wc-gateway.php:339
 msgid "Live credentials"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:350
+#: includes/class-paynet-wc-gateway.php:360
 msgid "Connection"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:354
+#: includes/class-paynet-wc-gateway.php:364
 msgid "Notifications and options"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:358
+#: includes/class-paynet-wc-gateway.php:368
 msgid "Callback URL"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:362
+#: includes/class-paynet-wc-gateway.php:372
 msgid "Test order-number salt"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:366
+#: includes/class-paynet-wc-gateway.php:376
 msgid "Payment window (minutes)"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:373
+#: includes/class-paynet-wc-gateway.php:383
 msgid "Not longer than WooCommerce \"Hold stock\" — the shorter value is used. Minimum 10 minutes (Paynet does not accept a shorter payment window)."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:376
+#: includes/class-paynet-wc-gateway.php:386
 msgid "Notification IP check"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:378
+#: includes/class-paynet-wc-gateway.php:388
 msgid "Accept notifications only from Paynet IP addresses (turn off behind CDN or proxy)"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:382
+#: includes/class-paynet-wc-gateway.php:392
 msgid "Debug log"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:384
+#: includes/class-paynet-wc-gateway.php:394
 msgid "Write a debug log (WooCommerce → Status → Logs). No personal data is logged."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:388
+#: includes/class-paynet-wc-gateway.php:398
 msgid "Saved cards"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:390
+#: includes/class-paynet-wc-gateway.php:400
 msgid "Let registered customers pay with saved cards. Enable only after Paynet turns on card saving for your sale area."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:394
+#: includes/class-paynet-wc-gateway.php:404
 msgid "Uninstall"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:396
+#: includes/class-paynet-wc-gateway.php:406
 msgid "Delete plugin data when the plugin is deleted: settings and saved cards in WordPress (cards stay saved in Paynet). Orders are not changed."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:412
+#: includes/class-paynet-wc-gateway.php:422
 msgid "In test mode you do not need to send this address and notifications do not arrive — see the test mode notice above."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:413
+#: includes/class-paynet-wc-gateway.php:423
 msgid "Send this address to Paynet for your sale area — without it payment notifications are not sent."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:421
+#: includes/class-paynet-wc-gateway.php:431
 msgid "Copy"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:447
+#: includes/class-paynet-wc-gateway.php:457
 msgid "Regenerate"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:448
+#: includes/class-paynet-wc-gateway.php:458
 msgid "Added to order numbers in test mode so they do not collide with other users of the shared test account."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:468
+#: includes/class-paynet-wc-gateway.php:478
 msgid "Fill with test credentials"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:469
+#: includes/class-paynet-wc-gateway.php:479
 msgid "Public credentials of the shared Paynet test account (docs.paynet.md). Click \"Save changes\" afterwards."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:489
+#: includes/class-paynet-wc-gateway.php:499
 msgid "Check connection"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:491
+#: includes/class-paynet-wc-gateway.php:501
 msgid "Signs in to the Paynet API of the selected mode with the login and password entered above (saving is not needed)."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:504
+#: includes/class-paynet-wc-gateway.php:514
 msgid "Not allowed."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:510
+#: includes/class-paynet-wc-gateway.php:520
 msgid "Enter the API login and password."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:515
+#: includes/class-paynet-wc-gateway.php:525
 msgid "Connected."
 msgstr ""
 
 #. translators: %s: error text
-#: includes/class-paynet-wc-gateway.php:519
+#: includes/class-paynet-wc-gateway.php:529
 #, php-format
 msgid "No answer from Paynet: %s"
 msgstr ""
 
 #. translators: 1: HTTP code, 2: Paynet error code, 3: error text
-#: includes/class-paynet-wc-gateway.php:522
+#: includes/class-paynet-wc-gateway.php:532
 #, php-format
 msgid "Error %1$d %2$s: %3$s"
 msgstr ""
 
 #. translators: %s: store currency
-#: includes/class-paynet-wc-gateway.php:599
+#: includes/class-paynet-wc-gateway.php:609
 #, php-format
 msgid "Paynet accepts MDL, USD and EUR. The store currency is %s, so Paynet is not shown to customers."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:601
+#: includes/class-paynet-wc-gateway.php:611
 msgid "Only MDL is available in the Paynet test environment."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:604
+#: includes/class-paynet-wc-gateway.php:614
 msgid "Enter the API login, password and SaleArea of the selected mode: until then Paynet is not shown to customers."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:607
+#: includes/class-paynet-wc-gateway.php:617
 msgid "TEST MODE"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:608
+#: includes/class-paynet-wc-gateway.php:618
 msgid "The Paynet test account is shared by all developers. Therefore:"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:609
+#: includes/class-paynet-wc-gateway.php:619
 msgid "Payment notifications do not reach your site."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:609
+#: includes/class-paynet-wc-gateway.php:619
 msgid "Paynet sends notifications to one address per sale area, and the test sale area is shared. The order status is updated when the customer returns to your site after payment and by a background check (after 2, 5, 15 and 30 minutes). In live mode notifications arrive once you send the Callback URL to Paynet for your sale area."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:610
+#: includes/class-paynet-wc-gateway.php:620
 msgid "A payment creation error may be caused by an order number collision"
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:610
+#: includes/class-paynet-wc-gateway.php:620
 msgid "with another user. The plugin adds a random salt to order numbers; if errors repeat, click \"Regenerate\"."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:665 includes/class-paynet-wc-payment.php:223
+#: includes/class-paynet-wc-gateway.php:675 includes/class-paynet-wc-payment.php:223
 msgid "Could not proceed to payment, please try again."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:680
+#: includes/class-paynet-wc-gateway.php:690
 msgid "Order not found."
 msgstr ""
 
-#: includes/class-paynet-wc-gateway.php:698
+#: includes/class-paynet-wc-gateway.php:708
 msgid "The payment is being processed. The order status will be updated automatically within a few minutes."
 msgstr ""
 
