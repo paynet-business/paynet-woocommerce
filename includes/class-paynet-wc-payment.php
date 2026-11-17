@@ -74,20 +74,24 @@ class Paynet_WC_Payment {
 		if ( '' === $paynet_order || ! ctype_digit( $paynet_order ) ) {
 			return null;
 		}
+		// `meta_key` / `meta_value`, not `meta_query`: the posts storage (HPOS off) silently drops `meta_query`
+		// in wc_get_orders and would return the latest order of the shop. Both storages support these two.
 		$orders = wc_get_orders(
 			array(
-				'limit'      => 1,
+				'limit'      => 5,
 				'type'       => 'shop_order',
 				'status'     => array_keys( wc_get_order_statuses() ),
-				'meta_query' => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-					array(
-						'key'   => self::META_ORDER,
-						'value' => $paynet_order,
-					),
-				),
+				'meta_key'   => self::META_ORDER, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value' => $paynet_order, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			)
 		);
-		return $orders ? $orders[0] : null;
+		// Never trust the query alone: the order must really carry this Paynet Order.
+		foreach ( $orders as $order ) {
+			if ( (string) $order->get_meta( self::META_ORDER ) === $paynet_order ) {
+				return $order;
+			}
+		}
+		return null;
 	}
 
 	/**

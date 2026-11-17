@@ -73,7 +73,8 @@ test( '16 Old plugin active: warning in the admin', async ( { page, request } ) 
 	await page.goto( '/wp-admin/plugins.php' );
 	await expect( page.locator( '.notice-warning', { hasText: NOTICE } ) ).toBeVisible();
 	await expect( page.locator( 'tr[data-plugin="paynet-gateway/paynet-gateway.php"]' ) ).toHaveClass( /\bactive\b/ );
-	await page.goto( '/wp-admin/admin.php?page=wc-settings&tab=checkout' );
+	// Dashboard too (WooCommerce's own React pages, e.g. Settings → Payments, show no admin notices at all).
+	await page.goto( '/wp-admin/index.php' );
 	await expect( page.locator( '.notice-warning', { hasText: NOTICE } ) ).toBeVisible();
 	await page.waitForTimeout( 1500 );
 
@@ -159,6 +160,20 @@ test( '17 Old plugin order not found in Paynet: note «check manually», old can
 	// Forged notification with a wrong Hash: 400, nothing changes.
 	const bad = await h.sendNotification( request, n, 'AAAAAAAAAAAAAAAAAAAAAA==' );
 	expect( bad.status ).toBe( 400 );
+} );
+
+test( '17 Notification for an unknown Order (e.g. another site on the same SaleArea): 200, no order touched', async ( { request } ) => {
+	await legacy( request, true );
+	const o = await legacyOrder( request ); // The latest order of the shop.
+	await legacy( request, false );
+	const before = await h.order( request, o.id );
+	// Signed, but neither a new-plugin Order nor an old-plugin order of this shop.
+	const r = await h.sendNotification( request, h.notification( { paymentId: 5, externalId: '987654321012345678', amount: o.amount } ) );
+	expect( r.status ).toBe( 200 );
+	const after = await h.order( request, o.id );
+	expect( after.status ).toBe( before.status );
+	expect( after.notes ).toEqual( before.notes );
+	expect( after.meta ).toEqual( before.meta );
 } );
 
 test( '17 Old plugin order: paid amount differs from the order (mock) — on-hold, admin email', async ( { request } ) => {
