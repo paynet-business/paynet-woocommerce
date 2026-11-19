@@ -313,6 +313,31 @@ test.describe( 'saved cards', () => {
 		await page.waitForTimeout( 1500 );
 	} );
 
+	test( '30 Delete a card in the Block checkout: one window with the card name, readable button, "Cancel" keeps the card', async ( { page, request } ) => {
+		await h.login( page );
+		await h.addToCart( page, ids.product );
+		await page.goto( '/?page_id=' + ids.blocks_checkout );
+		await page.waitForSelector( '.wc-block-checkout', { timeout: 30000 } );
+		const radio = page.locator( '#radio-control-wc-payment-method-options-paynet_wc' );
+		if ( ( await radio.count() ) && ( await radio.isVisible() ) ) {
+			await radio.check();
+		}
+		const visa = page.locator( '.paynet-wc-card', { hasText: 'Visa •••• 1111' } );
+		const del = visa.locator( '.paynet-wc-card-delete' );
+		await del.hover();
+		await page.waitForTimeout( 600 );
+		expect( await del.evaluate( ( el ) => getComputedStyle( el ).backgroundColor ), 'the theme must not paint the button dark on hover' ).toBe( 'rgba(0, 0, 0, 0)' );
+		await del.click();
+		await expect( page.locator( '.paynet-wc-modal' ), 'exactly one window' ).toHaveCount( 1 );
+		await expect( page.locator( '.paynet-wc-modal' ) ).toContainText( 'Do you really want to delete the card Visa •••• 1111?' );
+		await page.waitForTimeout( 800 );
+		await page.click( '.paynet-wc-modal-no' );
+		await expect( page.locator( '.paynet-wc-modal' ) ).toHaveCount( 0 );
+		await expect( visa ).toBeVisible();
+		expect( await h.cards( request, ids.customer ) ).toHaveLength( 1 );
+		await page.waitForTimeout( 1500 );
+	} );
+
 	test( '31 Unlink answers 404 (card removed in WP) / 500 (card kept, message)', async ( { page, request } ) => {
 		const gone = await h.addCard( request, ids.customer, { hash: '1_00000000000000000000000000000404', last4: '0404', month: '01', year: '2031' } );
 		await h.login( page );
