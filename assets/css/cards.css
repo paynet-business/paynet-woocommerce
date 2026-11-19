@@ -3,7 +3,11 @@
 .paynet-wc-card { display: flex; align-items: center; gap: .75em; margin: .35em 0; }
 .paynet-wc-card label { display: inline-flex; align-items: center; gap: .5em; margin: 0; cursor: pointer; }
 .paynet-wc-card-exp { opacity: .7; }
-.paynet-wc-card-delete { background: none; border: 0; padding: 0; color: inherit; text-decoration: underline; cursor: pointer; font-size: .9em; }
+.paynet-wc-cards .paynet-wc-card .paynet-wc-card-delete { background: none; background-color: transparent; border: 0; border-radius: 0; box-shadow: none; padding: 0; margin: 0; min-height: 0; color: inherit; font-weight: normal; text-decoration: underline; cursor: pointer; font-size: .9em; }
+/* Themes restyle buttons on hover/focus (dark background); keep our text readable. */
+.paynet-wc-cards .paynet-wc-card .paynet-wc-card-delete:hover,
+.paynet-wc-cards .paynet-wc-card .paynet-wc-card-delete:focus,
+.paynet-wc-cards .paynet-wc-card .paynet-wc-card-delete:active { background: none !important; background-color: transparent !important; color: inherit !important; box-shadow: none; text-decoration: none; }
 .paynet-wc-card-error { margin-top: .5em; }
 .paynet-wc-modal { position: fixed; inset: 0; z-index: 100000; display: flex; align-items: center; justify-content: center; background: rgba( 0, 0, 0, .45 ); }
 .paynet-wc-modal-box { background: #fff; color: #1e1e1e; max-width: 26em; padding: 1.5em; border-radius: 6px; box-shadow: 0 6px 24px rgba( 0, 0, 0, .25 ); }

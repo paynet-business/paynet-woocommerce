@@ -95,6 +95,7 @@
 					type: 'button',
 					className: 'paynet-wc-card-delete',
 					'data-token': card.id,
+					'data-paynet-react': '1', // Handled here: the document-level handler in cards.js must skip it.
 					onClick: function () { remove( card ); }
 				}, text.delete || 'Delete' )
 			);

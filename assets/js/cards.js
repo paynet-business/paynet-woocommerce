@@ -12,6 +12,10 @@
 	// Confirmation window: resolves true for "Yes", false for "Cancel".
 	function confirmDelete( label ) {
 		return new Promise( function ( resolve ) {
+			if ( document.querySelector( '.paynet-wc-modal' ) ) {
+				resolve( false ); // One window at a time.
+				return;
+			}
 			var overlay = document.createElement( 'div' );
 			overlay.className = 'paynet-wc-modal';
 			overlay.setAttribute( 'role', 'dialog' );
@@ -78,6 +82,9 @@
 	document.addEventListener( 'click', function ( event ) {
 		// Classic checkout list.
 		var btn = event.target.closest && event.target.closest( '.paynet-wc-cards .paynet-wc-card-delete' );
+		if ( btn && btn.hasAttribute( 'data-paynet-react' ) ) {
+			return; // Block checkout: the React button has its own handler (a second window would say "null").
+		}
 		if ( btn ) {
 			event.preventDefault();
 			var li = btn.closest( 'li' );
