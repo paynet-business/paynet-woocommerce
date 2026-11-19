@@ -405,6 +405,58 @@ add_action(
 				},
 			)
 		);
+		// Stage 6: which card / wallet icons WooCommerce itself ships (for the icons decision).
+		register_rest_route(
+			$ns,
+			'/wc-icons',
+			array(
+				'methods'             => 'GET',
+				'permission_callback' => $open,
+				'callback'            => static function () {
+					$base  = WC()->plugin_path() . '/';
+					$found = array();
+					$it    = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $base . 'assets/images', FilesystemIterator::SKIP_DOTS ) );
+					foreach ( $it as $f ) {
+						if ( preg_match( '/(visa|master|apple|google)/i', $f->getFilename() ) ) {
+							$found[] = substr( $f->getPathname(), strlen( $base ) );
+						}
+					}
+					sort( $found );
+					return array(
+						'wc'    => WC_VERSION,
+						'files' => $found,
+					);
+				},
+			)
+		);
+		// Stage 6: uninstall.php — fixture, run, state.
+		register_rest_route(
+			$ns,
+			'/uninstall/(?P<action>fixture|run|state)',
+			array(
+				'methods'             => array( 'GET', 'POST' ),
+				'permission_callback' => $open,
+				'callback'            => static function ( $req ) {
+					$action = $req['action'];
+					if ( 'fixture' === $action ) {
+						set_transient( 'paynet_wc_token_e2e', 'e2e-token', HOUR_IN_SECONDS );
+						as_schedule_single_action( time() + DAY_IN_SECONDS, 'paynet_wc_check_payment', array( 999999, 'e2e', 0 ), 'paynet-for-woocommerce' );
+					} elseif ( 'run' === $action ) {
+						if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+							define( 'WP_UNINSTALL_PLUGIN', plugin_basename( PAYNET_WC_FILE ) );
+						}
+						include PAYNET_WC_DIR . 'uninstall.php';
+					}
+					return array(
+						'settings'  => false !== get_option( 'woocommerce_paynet_wc_settings', false ),
+						'salt'      => false !== get_option( 'paynet_wc_test_salt', false ),
+						'transient' => false !== get_transient( 'paynet_wc_token_e2e' ),
+						'tokens'    => count( WC_Payment_Tokens::get_tokens( array( 'gateway_id' => 'paynet_wc' ) ) ),
+						'scheduled' => count( as_get_scheduled_actions( array( 'hook' => 'paynet_wc_check_payment', 'status' => 'pending', 'per_page' => 100 ), 'ids' ) ),
+					);
+				},
+			)
+		);
 	}
 );
 

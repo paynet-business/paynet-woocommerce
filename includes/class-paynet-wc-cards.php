@@ -456,15 +456,19 @@ class Paynet_WC_Cards {
 	}
 
 	/**
-	 * Card list script for the classic checkout and "My account".
+	 * Styles (icons, card list) and the card list script for the classic checkout and "My account".
 	 */
 	public static function scripts() {
-		if ( ! is_user_logged_in() || ! ( is_checkout() || is_account_page() ) ) {
+		if ( ! ( is_checkout() || is_account_page() ) ) {
+			return;
+		}
+		// Styles for everyone (payment method icons), the card script only for logged-in customers.
+		wp_enqueue_style( 'paynet-wc-cards', PAYNET_WC_URL . 'assets/css/cards.css', array(), PAYNET_WC_VERSION );
+		if ( ! is_user_logged_in() ) {
 			return;
 		}
 		wp_enqueue_script( 'paynet-wc-cards', PAYNET_WC_URL . 'assets/js/cards.js', array(), PAYNET_WC_VERSION, true );
 		wp_localize_script( 'paynet-wc-cards', 'paynetWcCards', self::script_data() );
-		wp_enqueue_style( 'paynet-wc-cards', PAYNET_WC_URL . 'assets/css/cards.css', array(), PAYNET_WC_VERSION );
 	}
 
 	/**

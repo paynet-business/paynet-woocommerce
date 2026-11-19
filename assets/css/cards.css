@@ -1,4 +1,4 @@
-/* Paynet saved cards: list under the payment method and the confirmation window (ТЗ разд. 9б). */
+/* Paynet: icons next to the method title, saved cards list list under the payment method and the confirmation window (ТЗ разд. 9б). */
 .paynet-wc-cards { list-style: none; margin: .75em 0 0; padding: 0; }
 .paynet-wc-card { display: flex; align-items: center; gap: .75em; margin: .35em 0; }
 .paynet-wc-card label { display: inline-flex; align-items: center; gap: .5em; margin: 0; cursor: pointer; }
@@ -9,3 +9,7 @@
 .paynet-wc-modal-box { background: #fff; color: #1e1e1e; max-width: 26em; padding: 1.5em; border-radius: 6px; box-shadow: 0 6px 24px rgba( 0, 0, 0, .25 ); }
 .paynet-wc-modal-box p { margin: 0 0 1em; }
 .paynet-wc-modal-box .button { margin-right: .5em; }
+/* Icons (classic checkout: inside the method label; Blocks: after the title). */
+.paynet-wc-label { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .5em; width: 100%; }
+.paynet-wc-icons { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .35em; margin-left: auto; }
+.paynet-wc-icons img.paynet-wc-icon, .payment_method_paynet_wc .paynet-wc-icons img { display: inline-block; height: 24px; width: auto; max-height: 24px; margin: 0; float: none; vertical-align: middle; }
