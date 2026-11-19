@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # Stitches Playwright videos into ONE MP4 per stage (ТЗ 13.1), with a 2-second title card before each scenario.
-# Usage: tools/stage-video.sh <videos.tsv> <output.mp4> "<stage title>"
+# Usage: [SPEEDUP=3] tools/stage-video.sh <videos.tsv> <output.mp4> "<stage title>"
+# SPEEDUP (default 1): playback speed of the scenario recordings; title cards always last 2 seconds.
 set -euo pipefail
 
 LIST="$1"
 OUT="$2"
 STAGE="${3:-Stage}"
 FONT="${FONT:-/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf}"
+SPEEDUP="${SPEEDUP:-1}"
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
@@ -20,7 +22,7 @@ card() { # $1 = text, $2 = output. Text is read from a file: commas, quotes and 
 
 norm() { # $1 = input webm, $2 = output
 	ffmpeg -nostdin -loglevel error -y -i "$1" -f lavfi -i "anullsrc=r=44100:cl=mono" \
-		-vf "scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2,fps=25" \
+		-vf "setpts=PTS/${SPEEDUP},scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2,fps=25" \
 		-c:v libx264 -preset veryfast -pix_fmt yuv420p -c:a aac -shortest "$2"
 }
 

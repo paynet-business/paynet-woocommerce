@@ -60,8 +60,41 @@ jobs:
         with:
           build-dir: build/paynet-for-woocommerce
 
+  package:
+    name: Archive for manual installation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and check the archive
+        run: bash tools/build-dist.sh build
+      - name: Report (Summary)
+        run: |
+          {
+            echo "## Archive for manual installation"
+            echo ""
+            echo "Download: **Artifacts → paynet-for-woocommerce-zip** (GitHub wraps the file in one more .zip: unpack it once, inside is paynet-for-woocommerce-VERSION.zip)."
+            echo ""
+            echo '```'
+            cat build/paynet-for-woocommerce-*.zip.sha256
+            echo '```'
+            echo ""
+            echo "Contents:"
+            echo ""
+            echo '```'
+            unzip -Z1 build/paynet-for-woocommerce-*.zip | grep -v '/$'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paynet-for-woocommerce-zip
+          path: |
+            build/paynet-for-woocommerce-*.zip
+            build/paynet-for-woocommerce-*.zip.sha256
+          retention-days: 90
+
   e2e:
     name: E2E (HPOS ${{ matrix.hpos }})
+    needs: package
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -69,13 +102,26 @@ jobs:
       matrix:
         hpos: ['on', 'off']
     env:
-      STAGE: '6'
+      STAGE: '7'
+      TZ_COVERAGE: '33'
       HPOS: ${{ matrix.hpos }}
     defaults:
       run:
         working-directory: e2e
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: paynet-for-woocommerce-zip
+          path: build/zip
+      - name: Install the plugin from the archive (E2E runs on exactly what is shipped)
+        working-directory: .
+        run: |
+          unzip -q build/zip/paynet-for-woocommerce-*.zip -d build
+          test -f build/paynet-for-woocommerce/paynet-for-woocommerce.php
+          jq '.plugins[1] = "./build/paynet-for-woocommerce"' .wp-env.json > .wp-env.ci.json
+          mv .wp-env.ci.json .wp-env.json
+          cat .wp-env.json
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -107,12 +153,12 @@ jobs:
         id: pw
       - name: Report (Summary)
         if: always()
-        run: node ../tools/e2e-report.js results/results.json "$GITHUB_STEP_SUMMARY" results/videos.tsv "E2E scenarios — HPOS ${HPOS}" "stage${STAGE}.spec.js" || true
+        run: node ../tools/e2e-report.js results/results.json "$GITHUB_STEP_SUMMARY" results/videos.tsv "Final run on the archive — E2E, HPOS ${HPOS}" tz
       - name: Stage video
         if: always() && matrix.hpos == 'on'
         run: |
           sudo apt-get install -y -qq ffmpeg fonts-dejavu-core > /dev/null
-          bash ../tools/stage-video.sh results/videos.tsv "results/video-stage-${STAGE}.mp4" "Paynet for WooCommerce — stage ${STAGE} — ${GITHUB_SHA::7}"
+          SPEEDUP=3 bash ../tools/stage-video.sh results/videos.tsv "results/video-stage-${STAGE}.mp4" "Paynet for WooCommerce 1.0.0 — final report (x3 speed) — ${GITHUB_SHA::7}"
       - uses: actions/upload-artifact@v4
         if: always() && matrix.hpos == 'on'
         with:

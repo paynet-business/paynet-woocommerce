@@ -2,7 +2,7 @@
 
 WooCommerce payment gateway for the Paynet Ecom API (card, Apple Pay, Google Pay via the Paynet payment page).
 
-Status: **stage 6 — release candidate 1.0.0** (payments, refunds, saved cards, switching from the old plugin, EN/RU/RO). Description for WordPress.org: `readme.txt`.
+Status: **stage 7 — release candidate 1.0.0, final test run on the installation archive** (payments, refunds, saved cards, switching from the old plugin, EN/RU/RO). Description for WordPress.org: `readme.txt`.
 
 ## Try it without installing anything
 
@@ -13,7 +13,8 @@ Status: **stage 6 — release candidate 1.0.0** (payments, refunds, saved cards,
 GitHub → **Actions** → latest run of **CI**:
 
 1. **Summary** — table of scenarios (✅/❌), unit tests, Plugin Check, Playground link.
-2. **Artifacts → stage-video** — one MP4 with all scenarios of the stage.
+2. **Artifacts → video-stage-N** — one MP4 with the scenarios of the stage (the final run: all specification scenarios, x3 speed).
+3. **Artifacts → paynet-for-woocommerce-zip** — the archive for manual installation (`paynet-for-woocommerce-1.0.0.zip` + checksum). The final E2E run installs the plugin from this very archive.
 
 ## Development
 
